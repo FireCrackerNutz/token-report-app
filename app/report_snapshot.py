@@ -263,37 +263,37 @@ def _build_domain_findings_rule_based(
 def _build_domain_findings_gpt(
     domains: List[DomainStats],
     board_escalations: List[BoardEscalation],
-    model: str = "gpt-4.1-mini",
+    model: str | None = None,
 ) -> List[Dict[str, Any]]:
     """
     Build domain findings using GPT for narrative fields, keeping the same JSON shape
-    as the rule-based version. Falls back to rule-based logic if anything fails.
+    as the rule-based version.
 
-    One GPT call per domain.
+    IMPORTANT: We use *all* narrative Q&As (BoardEscalation rows) for that domain
+    as context, even if flag == "No Review". The 'Review Required' ones are just
+    treated as higher-salience by the model.
     """
-    # Group real escalation rows by domain_code
-    real_by_domain: Dict[str, List[BoardEscalation]] = defaultdict(list)
-    for esc in board_escalations:
-        if _is_real_board_trigger(esc.flag):
-            real_by_domain[esc.domain_code].append(esc)
-
     findings: List[Dict[str, Any]] = []
 
+    # Group ALL escalation/narrative rows by domain_name (not just Review Required)
+    by_domain: Dict[str, List[BoardEscalation]] = defaultdict(list)
+    for esc in board_escalations:
+        by_domain[esc.domain_name].append(esc)
+
     for d in domains:
-        escalations = real_by_domain.get(d.code, [])
+        domain_escalations = by_domain.get(d.name, [])
 
         try:
-            gpt_fields = generate_domain_findings_via_gpt(d, escalations, model=model)
+            gpt_fields = generate_domain_findings_via_gpt(d, domain_escalations, model=model)
         except Exception as e:
-            # For now just print a warning and fall back to rule-based text
+            # Log + fallback so the report still works
             print(f"[WARN] GPT domain findings failed for '{d.name}': {e}")
-            # reuse rule-based helper for this single domain
+            # Use your existing rule-based helper for this one domain
             rb = _build_domain_findings_rule_based([d], board_escalations)
             if rb:
                 findings.append(rb[0])
             continue
 
-        # Merge GPT narrative fields with the structural fields
         findings.append(
             {
                 "domain_code": d.code,
@@ -311,6 +311,7 @@ def _build_domain_findings_gpt(
         )
 
     return findings
+
 
 
 # --- Public API ----------------------------------------------------------
