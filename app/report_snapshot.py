@@ -3,7 +3,16 @@ from collections import defaultdict
 import os
 
 from .models import DomainStats, BoardEscalation
-from .llm_client import generate_domain_findings_via_gpt
+from .llm_client import generate_domain_findings_via_gpt, refine_risk_tags_via_gpt
+from .asset_risks_baseline import build_asset_specific_risks
+from .risk_tag_inference import infer_risk_tags_from_ddq
+from .listing_requirements import build_listing_requirements, build_listing_context
+from .token_type import canonical_token_type_from_ddq
+from .token_fact_sheet import build_token_fact_sheet
+from .executive_summary import build_executive_summary
+
+
+
 
 
 
@@ -317,14 +326,20 @@ def _build_domain_findings_gpt(
 # --- Public API ----------------------------------------------------------
 
 
-def build_report_snapshot(parsed_ddq: Dict[str, Any]) -> Dict[str, Any]:
+def build_report_snapshot(
+    parsed_ddq: Dict[str, Any],
+    token_meta: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
     """
     Take the raw parsed DDQ output (from parse_ddq) and build a higher-level
     snapshot object that the HTML/PDF renderer can consume.
 
-    For now this includes:
-      - risk_dashboard: overall band, per-domain cards, band distribution
-      - board_escalations: list of escalation cards (real triggers only)
+    Includes:
+      - risk_dashboard
+      - board_escalations
+      - domain_findings (GPT or rule-based)
+      - risk_tags (base + optional GPT-refined)
+      - asset_specific_risks (built from tags + your risk templates)
     """
     domain_stats: List[DomainStats] = parsed_ddq.get("domain_stats", [])
     board_escalations: List[BoardEscalation] = parsed_ddq.get("board_escalations", [])
@@ -354,7 +369,7 @@ def build_report_snapshot(parsed_ddq: Dict[str, Any]) -> Dict[str, Any]:
             "numeric": overall_band_numeric,
             "name": overall_band_name,
         },
-        "band_distribution": band_distribution,  # for a stacked bar / legend
+        "band_distribution": band_distribution,
         "domains": domains_payload,
     }
 
@@ -363,7 +378,6 @@ def build_report_snapshot(parsed_ddq: Dict[str, Any]) -> Dict[str, Any]:
     escalation_cards: List[Dict[str, Any]] = []
     for esc in board_escalations:
         if not _is_real_board_trigger(esc.flag):
-            # Skip informational "No Review" narratives
             continue
 
         escalation_cards.append(
@@ -390,17 +404,144 @@ def build_report_snapshot(parsed_ddq: Dict[str, Any]) -> Dict[str, Any]:
     else:
         domain_findings = _build_domain_findings_rule_based(domain_stats, board_escalations)
 
+    # --- Token meta + base risk tags (deterministic) ---------------------
 
+    # Start from whatever the caller knows about the token (name/ticker/type).
+    # For now we assume:
+    #   token_meta = {"name": "...", "ticker": "...", "token_type": "...", "risk_tags": [...]}
+    base_meta = token_meta.copy() if token_meta else {}
+    base_meta.setdefault("name", parsed_ddq.get("project_description") or "Unknown token")
+    base_meta.setdefault("ticker", "")
+    # Token type: prefer DDQ A1.1 (Primary & Secondary) for repeatability.
+    # Allow caller override only if explicitly provided.
+    if not base_meta.get("token_type"):
+        ddq_token_type, ddq_type_meta = canonical_token_type_from_ddq(parsed_ddq.get("token_category"))
+        base_meta["token_type"] = ddq_token_type
+        base_meta.setdefault("token_type_meta", ddq_type_meta)
+    else:
+        # Still store DDQ category for auditability if present
+        if parsed_ddq.get("token_category") and not base_meta.get("token_type_meta"):
+            _, ddq_type_meta = canonical_token_type_from_ddq(parsed_ddq.get("token_category"))
+            base_meta["token_type_meta"] = ddq_type_meta
+    base_meta.setdefault("risk_tags", [])
+
+    # Derive additional risk_tags deterministically from the DDQ
+    inferred_tags = infer_risk_tags_from_ddq(parsed_ddq)
+    combined_tags = set(base_meta.get("risk_tags") or [])
+    combined_tags.update(inferred_tags)
+
+    # These are our *base* tags (before GPT refinement)
+    base_risk_tags: List[str] = sorted(combined_tags)
+
+    final_token_meta = {
+        "name": base_meta["name"],
+        "ticker": base_meta["ticker"],
+        "token_type": base_meta["token_type"],
+        "token_type_meta": base_meta.get("token_type_meta"),
+        "risk_tags": base_risk_tags,
+    }
+
+    # --- Risk tags (optional GPT refiner on top of base tags) ------------
+
+    refined_risk_tags: List[Dict[str, Any]] = []
+    use_gpt_risk_refiner = os.getenv("USE_GPT_RISK_TAG_REFINER", "1") == "1"
+
+    if base_risk_tags:
+        if use_gpt_risk_refiner:
+            try:
+                refined_risk_tags = refine_risk_tags_via_gpt(parsed_ddq, base_risk_tags)
+            except Exception as e:
+                print(f"[WARN] GPT risk tag refiner failed: {e}")
+                refined_risk_tags = [
+                    {
+                        "id": t,
+                        "include": True,
+                        "reason": "Included by deterministic DDQ rule (risk tag refiner error).",
+                    }
+                    for t in base_risk_tags
+                ]
+        else:
+            # GPT refiner disabled -> just echo deterministic tags as 'included'
+            refined_risk_tags = [
+                {
+                    "id": t,
+                    "include": True,
+                    "reason": "Included by deterministic DDQ rule (GPT refiner disabled).",
+                }
+                for t in base_risk_tags
+            ]
+
+    # Decide which tag IDs actually drive downstream logic
+    if refined_risk_tags:
+        effective_tag_ids: List[str] = [
+            t["id"] for t in refined_risk_tags if t.get("include")
+        ]
+        if not effective_tag_ids:
+            effective_tag_ids = base_risk_tags
+    else:
+        effective_tag_ids = base_risk_tags
+
+    # --- Asset-specific risk disclosures (using your templates) ----------
+
+    # build_asset_specific_risks expects the *refined tag objects*:
+    #   [{"id": "...", "include": true/false, "reason": "..."}]
+    asset_specific_risks = build_asset_specific_risks(refined_risk_tags, parsed_ddq)
+
+    # --- Listing requirements (posture-based) ---------------------------
+
+    listing_ctx = build_listing_context(
+        overall_band_numeric,
+        board_escalations,
+        refined_risk_tags,
+    )
+
+    listing_requirements = build_listing_requirements(
+        overall_band_numeric,
+        board_escalations,
+        refined_risk_tags,
+    )
+
+    # --- Token fact sheet ----------------------------------------------
+
+    token_fact_sheet = build_token_fact_sheet(
+        parsed_ddq=parsed_ddq,
+        token_meta=final_token_meta,
+        risk_dashboard=risk_dashboard,
+        refined_risk_tags=refined_risk_tags,
+        board_escalation_cards=escalation_cards,
+        listing_ctx=listing_ctx,
+        listing_requirements=listing_requirements,
+    )
+
+    # --- Executive summary ---------------------------------------------
+
+    executive_summary = build_executive_summary(
+        token_fact_sheet=token_fact_sheet,
+        risk_dashboard=risk_dashboard,
+        domain_findings=domain_findings,
+        board_escalations=escalation_cards,
+        asset_specific_risks=asset_specific_risks,
+        listing_requirements=listing_requirements,
+        listing_ctx=listing_ctx,
+    )
+
+
+    # --- Assemble final snapshot -----------------------------------------
 
     snapshot = {
         "risk_dashboard": risk_dashboard,
         "board_escalations": escalation_cards,
         "domain_findings": domain_findings,
-        "asset_specific_risks": [],
-        "listing_requirements": [],
-        "token_fact_sheet": {},
-        "executive_summary": {},
+        # Internal tag layer – used to debug/understand why risks appear
+        "risk_tags": {
+            "base": base_risk_tags,
+            "refined": refined_risk_tags,
+        },
+        # User-facing risk wording, built from tags + the template catalogue
+        "asset_specific_risks": asset_specific_risks,
+        "listing_requirements": listing_requirements,
+        "token_fact_sheet": token_fact_sheet,
+        "executive_summary": executive_summary,
     }
-
 
     return snapshot

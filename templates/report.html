@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ asset.name }} ({{ asset.ticker }}) — Token Listing Risk Assessment</title>
+  <link rel="stylesheet" href="{{ css_path }}">
+</head>
+<body>
+
+  <!-- Fixed header/footer for print-like reading (works in browser + most PDF print flows) -->
+  <header class="pageHeader">
+    <div class="hdrLeft">
+      <div class="hdrTitle">Token Listing Risk Assessment</div>
+      <div class="hdrSub muted">Risk snapshot — generated {{ generated_at }}</div>
+    </div>
+    <div class="hdrRight">
+      <div class="hdrAsset">{{ asset.name }} <span class="muted">({{ asset.ticker }})</span></div>
+      <div class="hdrMeta muted">Report ID {{ report_id }}</div>
+    </div>
+  </header>
+
+  <footer class="pageFooter">
+    <div class="muted">Confidential — for internal use only</div>
+    <div class="muted">{{ asset.ticker }} · {{ report_id }}</div>
+  </footer>
+
+  <main class="page">
+
+    <!-- COVER / HEADER -->
+    <section class="section cover">
+      <div class="coverTop">
+        <div class="coverAsset">
+          {% if asset.logo_url %}
+            <img class="logo" src="{{ asset.logo_url }}" alt="{{ asset.name }} logo" />
+          {% else %}
+            <div class="logoPlaceholder" aria-hidden="true"></div>
+          {% endif %}
+
+          <div class="coverText">
+            <h1 class="h1">Token Listing Risk Assessment</h1>
+            <div class="h2">{{ asset.name }} <span class="muted">({{ asset.ticker }})</span></div>
+            <div class="muted small">
+              Prepared using a DDQ-driven risk engine and (optional) third‑party reference data.
+            </div>
+          </div>
+        </div>
+
+        <div class="coverChips">
+          <div class="chip band band-{{ overall.numeric|default(0) }}">
+            Overall: {{ overall.name|default("Unknown") }}{% if overall.numeric %} ({{ overall.numeric }}/5){% endif %}
+          </div>
+          {% if posture %}
+            <div class="chip">Posture: <strong>{{ posture }}</strong></div>
+          {% endif %}
+          <div class="chip">Escalations: <strong>{{ escalations_count }}</strong></div>
+          {% if classification.is_speculative_profile %}
+            <div class="chip chipWarn">Speculative profile</div>
+          {% endif %}
+          {% if classification.has_hard_control_risks %}
+            <div class="chip chipWarn">Hard controls present</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="calloutTitle">How to read this report</div>
+        <div class="muted">
+          This report summarises due‑diligence findings, the asset’s risk profile, and suggested controls to support listing and ongoing monitoring decisions.
+          It is intended for listing, risk and compliance committees.
+        </div>
+      </div>
+    </section>
+
+    <!-- EXECUTIVE SUMMARY -->
+    <section class="section pageBreak">
+      <div class="sectionHeader">
+        <h2 class="h2">Executive summary</h2>
+        <div class="muted">
+          A committee‑ready view of the overall risk posture, key positives, key risks/mitigations, and open decision points.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTitle">{{ exec.headline_decision_view|default("Committee decision required") }}</div>
+          {% if posture %}
+            <div class="chip">Posture: <strong>{{ posture }}</strong></div>
+          {% endif %}
+        </div>
+
+        {% if exec.one_paragraph_narrative %}
+          <p class="para">{{ exec.one_paragraph_narrative }}</p>
+        {% else %}
+          <p class="para muted">No narrative summary available (generation disabled or incomplete).</p>
+        {% endif %}
+
+        <div class="twoCol">
+          <div>
+            <div class="subhead">Key positives</div>
+            <ul class="bullets">
+              {% for p in exec.key_positives|default([]) %}
+                <li>{{ p }}</li>
+              {% endfor %}
+              {% if (exec.key_positives|default([]))|length == 0 %}
+                <li class="muted">None highlighted.</li>
+              {% endif %}
+            </ul>
+          </div>
+
+          <div>
+            <div class="subhead">Key risks & mitigations</div>
+            <ul class="bullets">
+              {% for rm in exec.key_risks_and_mitigations|default([]) %}
+                <li>
+                  <strong>{{ rm.risk }}</strong>
+                  {% if rm.mitigation %}
+                    <div class="muted small">Mitigation: {{ rm.mitigation }}</div>
+                  {% endif %}
+                </li>
+              {% endfor %}
+              {% if (exec.key_risks_and_mitigations|default([]))|length == 0 %}
+                <li class="muted">None highlighted.</li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="subhead">Open questions for committee</div>
+        <ul class="bullets">
+          {% for q in exec.open_questions_for_committee|default([]) %}
+            <li>{{ q }}</li>
+          {% endfor %}
+          {% if (exec.open_questions_for_committee|default([]))|length == 0 %}
+            <li class="muted">Confirm monitoring cadence and reassessment triggers post‑listing.</li>
+          {% endif %}
+        </ul>
+      </div>
+    </section>
+
+    <!-- RISK DASHBOARD -->
+    <section class="section pageBreak">
+      <div class="sectionHeader">
+        <h2 class="h2">Risk dashboard</h2>
+        <div class="muted">
+          A high‑level view of overall risk band and how risk is distributed across domains. Use this to locate where issues concentrate before reading detailed findings.
+        </div>
+      </div>
+
+      <div class="dashboardGrid">
+        <div class="card">
+          <div class="cardTop">
+            <div class="cardTitle">Overall band</div>
+            <div class="chip band band-{{ overall.numeric|default(0) }}">{{ overall.name|default("Unknown") }}</div>
+          </div>
+          <div class="bigBand">
+            {% if overall.numeric %}{{ overall.numeric }}/5{% else %}—{% endif %}
+          </div>
+          <div class="muted small">
+            Bands reflect weighted DDQ scoring across domains and escalation triggers. Higher bands indicate more material risks and/or more governance/controls required.
+          </div>
+
+          <div class="bandScale" aria-hidden="true">
+            {% for i in [1,2,3,4,5] %}
+              <div class="bandSeg band-{{ i }} {% if overall.numeric == i %}active{% endif %}"></div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardTop">
+            <div class="cardTitle">Band distribution</div>
+            <div class="muted small">Share of total domain weight by band</div>
+          </div>
+
+          {% set bd = snapshot.risk_dashboard.band_distribution|default({}) %}
+          <div class="stackBar" role="img" aria-label="Band distribution">
+            {% for band_name in ["Very Low","Low","Medium","Medium-High","High"] %}
+              {% set v = bd.get(band_name, 0) %}
+              {% if v and v > 0 %}
+                <div class="stackSeg bandName-{{ band_name|replace(" ","") }}" style="width: {{ (v*100)|round(2) }}%">
+                  <span class="stackLbl">{{ band_name }} {{ (v*100)|round(0) }}%</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <div class="legend">
+            {% for band_name in ["Very Low","Low","Medium","Medium-High","High"] %}
+              <div class="legendItem">
+                <span class="legendSwatch bandName-{{ band_name|replace(" ","") }}"></span>
+                <span class="muted small">{{ band_name }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="gridTitle">Domains</div>
+
+      <div class="domainGrid">
+        {% for d in snapshot.risk_dashboard.domains|default([]) %}
+          <div class="card domainCard bandLeft band-{{ d.band_numeric|default(0) }}">
+            <div class="cardTop">
+              <div class="cardTitle">{{ d.name }}</div>
+              <div class="chip band band-{{ d.band_numeric|default(0) }}">{{ d.band_name }}</div>
+            </div>
+            <div class="metaRow">
+              <div class="muted small">Avg score: <strong>{{ d.avg_score }}</strong></div>
+              <div class="muted small">Weight: <strong>{{ d.weight }}</strong></div>
+              <div class="muted small">
+                Escalations: <strong>{{ d.board_escalation_count|default(0) }}</strong>
+              </div>
+            </div>
+            {% if d.has_board_escalation %}
+              <div class="badge badgeWarn">Board escalation(s) present</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- DOMAIN FINDINGS -->
+    <section class="section pageBreak">
+      <div class="sectionHeader">
+        <h2 class="h2">Domain findings</h2>
+        <div class="muted">
+          For each domain, key strengths, material risks, and monitoring watchpoints derived from the DDQ (and optional model summarisation).
+        </div>
+      </div>
+
+      {% for d in snapshot.domain_findings|default([]) %}
+        <div class="card bandLeft band-{{ d.band_numeric|default(0) }}">
+          <div class="cardTop">
+            <div class="cardTitle">{{ d.domain_name }}</div>
+            <div class="chip band band-{{ d.band_numeric|default(0) }}">{{ d.band_name }}</div>
+          </div>
+          {% if d.one_line %}
+            <div class="muted">{{ d.one_line }}</div>
+          {% endif %}
+
+          <div class="threeCol">
+            <div>
+              <div class="subhead">Strengths</div>
+              <ul class="bullets">
+                {% for x in d.strengths|default([]) %}
+                  <li>{{ x }}</li>
+                {% endfor %}
+                {% if (d.strengths|default([]))|length == 0 %}<li class="muted">None noted.</li>{% endif %}
+              </ul>
+            </div>
+
+            <div class="tint">
+              <div class="subhead">Key risks</div>
+              <ul class="bullets">
+                {% for x in d.risks|default([]) %}
+                  <li>{{ x }}</li>
+                {% endfor %}
+                {% if (d.risks|default([]))|length == 0 %}<li class="muted">None noted.</li>{% endif %}
+              </ul>
+            </div>
+
+            <div>
+              <div class="subhead">Watchpoints</div>
+              <ul class="bullets">
+                {% for x in d.watchpoints|default([]) %}
+                  <li>{{ x }}</li>
+                {% endfor %}
+                {% if (d.watchpoints|default([]))|length == 0 %}<li class="muted">None noted.</li>{% endif %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </section>
+
+    <!-- BOARD ESCALATIONS -->
+    <section class="section pageBreak">
+      <div class="sectionHeader">
+        <h2 class="h2">Listing committee escalation items</h2>
+        <div class="muted">
+          DDQ questions flagged by automated rules for senior visibility. Each item shows the trigger and evidence recency to support committee judgment and follow‑ups.
+        </div>
+      </div>
+
+      {% if (snapshot.board_escalations|default([]))|length == 0 %}
+        <div class="card"><div class="muted">No listing committee escalation items were identified for this assessment.</div></div>
+      {% endif %}
+
+      {% for e in snapshot.board_escalations|default([]) %}
+        <div class="card escalationCard">
+          <div class="cardTop">
+            <div class="cardTitle">{{ e.domain_name }} — {{ e.question_id }}</div>
+            <div class="chip">{{ e.flag }}</div>
+          </div>
+
+          <div class="muted">{{ e.question_text }}</div>
+
+          <div class="metaRow">
+            {% if e.staleness_class %}
+              <div class="badge badgeStale">{{ e.staleness_class }}</div>
+            {% endif %}
+            {% if e.most_recent_source_date %}
+              <div class="muted small">Most recent source date: <strong>{{ e.most_recent_source_date }}</strong></div>
+            {% endif %}
+          </div>
+
+          {% if e.trigger_rule %}
+            <div class="muted small">Trigger: {{ e.trigger_rule }}</div>
+          {% endif %}
+
+          {% if e.raw_narrative %}
+            <div class="para">{{ e.raw_narrative }}</div>
+          {% endif %}
+
+          {% if e.citations %}
+            <div class="citations">
+              <div class="muted small">Sources:</div>
+              <ul class="citList">
+                {% for c in e.citations %}
+                  <li class="small"><a href="{{ c }}" target="_blank" rel="noreferrer noopener">{{ c }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </section>
+
+    <!-- ASSET-SPECIFIC RISKS -->
+    <section class="section pageBreak">
+      <div class="sectionHeader">
+        <h2 class="h2">Asset-specific risk disclosures</h2>
+        <div class="muted">
+          Targeted disclosures relevant to this asset, derived from the DDQ and risk-tag inference. Intended to complement any generic cryptoasset risk warnings.
+        </div>
+      </div>
+
+      {% if include_baseline_crypto_risks %}
+        <div class="card">
+          <div class="cardTop">
+            <div class="cardTitle">{{ baseline_general_heading }}</div>
+            <div class="chip">Jurisdictional</div>
+          </div>
+          <div class="muted">{{ baseline_general_explainer }}</div>
+          {% if baseline_general_risks and (baseline_general_risks|length) > 0 %}
+            <ul class="bullets">
+              {% for t in baseline_general_risks %}
+                <li>{{ t }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% for cat in snapshot.asset_specific_risks|default([]) %}
+        {% set cname = cat.category %}
+        {% set hide_cat = (not include_baseline_crypto_risks) and (cname|lower).startswith("cryptoasset risks") %}
+
+        {% if not hide_cat %}
+        <div class="card">
+          <div class="cardTop">
+            <div class="cardTitle">{{ cname }}</div>
+          </div>
+
+          <div class="muted small">
+            {% if category_intros.get(cname) %}
+              {{ category_intros.get(cname) }}
+            {% else %}
+              This category captures risks relevant to the token’s structure and operating model.
+            {% endif %}
+          </div>
+
+          <ul class="bullets">
+            {% for item in cat["items"]|default([]) %}
+              <li>
+                <div>{{ item.text }}</div>
+                {% if item.reason %}<div class="muted small">Why this matters: {{ item.reason }}</div>{% endif %}
+              </li>
+            {% endfor %}
+            {% if (cat["items"]|default([]))|length == 0 %}
+              <li class="muted">No items.</li>
+            {% endif %}
+          </ul>
+        </div>
+        {% endif %}
+      {% endfor %}
+<!-- LISTING REQUIREMENTS -->
+    <section class="section pageBreak">
+      <div class="sectionHeader">
+        <h2 class="h2">Listing requirements and controls</h2>
+        <div class="muted">
+          Concrete actions translating the risk assessment into listing, monitoring, and governance controls. “Required” items are expected for approval; “Recommended” items are strong suggestions.
+        </div>
+      </div>
+
+      {% set reqs = snapshot.listing_requirements|default([]) %}
+      {% if reqs|length == 0 %}
+        <div class="card"><div class="muted">No listing requirements were generated for this assessment.</div></div>
+      {% endif %}
+
+      {% for r in (reqs|sort(attribute="severity")) %}
+        {# We want Required first; Jinja sort doesn't handle custom ordering well. We'll do simple split below #}
+      {% endfor %}
+
+      {% set required = [] %}
+      {% set recommended = [] %}
+      {% for r in reqs %}
+        {% if (r.severity|lower) == "required" %}
+          {% set _ = required.append(r) %}
+        {% else %}
+          {% set _ = recommended.append(r) %}
+        {% endif %}
+      {% endfor %}
+
+      {% if required|length > 0 %}
+        <div class="gridTitle">Required</div>
+        {% for r in required %}
+          <div class="card reqCard req-required">
+            <div class="cardTop">
+              <div class="cardTitle">{{ r.title }}</div>
+              <div class="pill pillRequired">Required</div>
+            </div>
+            <div class="para">{{ r.text }}</div>
+            <div class="muted small">Control ID: {{ r.id }}</div>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if recommended|length > 0 %}
+        <div class="gridTitle">Recommended</div>
+        {% for r in recommended %}
+          <div class="card reqCard req-recommended">
+            <div class="cardTop">
+              <div class="cardTitle">{{ r.title }}</div>
+              <div class="pill pillRecommended">Recommended</div>
+            </div>
+            <div class="para">{{ r.text }}</div>
+            <div class="muted small">Control ID: {{ r.id }}</div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </section>
+
+    <!-- TOKEN FACT SHEET -->
+    <section class="section pageBreak">
+      <div class="sectionHeader">
+        <h2 class="h2">Token fact sheet</h2>
+        <div class="muted">
+          Reference information about the token and its implementation. This is not a marketing document and should be read alongside current market and technical data.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="factsGrid">
+          <div class="fact">
+            <div class="factLabel">Name</div>
+            <div class="factValue">{{ asset.name|default("—") }}</div>
+          </div>
+          <div class="fact">
+            <div class="factLabel">Ticker</div>
+            <div class="factValue">{{ asset.ticker|default("—") }}</div>
+          </div>
+          <div class="fact">
+            <div class="factLabel">Token type</div>
+            <div class="factValue">{{ asset.token_type|default("—") }}</div>
+          </div>
+          <div class="fact">
+            <div class="factLabel">Primary chain</div>
+            <div class="factValue">{{ asset.primary_chain|default("—") }}</div>
+          </div>
+          <div class="fact span2">
+            <div class="factLabel">Short description</div>
+            <div class="factValue">{{ asset.description_short|default("—") }}</div>
+          </div>
+        </div>
+
+        {% set links = asset.urls|default({}) %}
+        {% if links %}
+          <div class="hr"></div>
+          <div class="subhead">Key links</div>
+          <div class="linkRow">
+            {% for k,v in links.items() %}
+              {% if v %}
+                <a class="linkChip" href="{{ v }}" target="_blank" rel="noreferrer noopener">{{ k }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="section small muted">
+      This report is a risk snapshot based on the provided DDQ and optional third‑party metadata. It is not investment advice.
+    </section>
+
+  </main>
+</body>
+</html>

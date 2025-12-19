@@ -10,6 +10,7 @@ from .models import BoardEscalation, DomainStats
 # ---- CONFIG -------------------------------------------------------------
 
 MASTER_SUMMARY_SHEET = "Master_Summary"
+FUNDAMENTALS_SHEET = "Token Fundamentals & Governance"
 
 # Sheets we do NOT scan for board escalations
 IGNORED_SHEETS = {
@@ -32,6 +33,10 @@ NARRATIVE_HEADERS = ["narrative_justification"]
 CITATIONS_HEADERS = ["source_citations"]
 SOURCE_DATE_HEADERS = ["most_recent_source_date"]
 STALENESS_HEADERS = ["staleness_class"]
+
+# Header patterns for token fundamentals
+RAW_RESPONSE_HEADERS = ["raw_response", "raw response", "response"]
+CONFIDENCE_HEADERS = ["confidence"]
 
 
 # ---- ESCALATION CLASSIFICATION -----------------------------------------
@@ -328,6 +333,80 @@ def parse_board_escalations(wb) -> List[BoardEscalation]:
     return escalations
 
 
+# ---- PARSE TOKEN CATEGORY (A1.1) --------------------------------------
+
+def _parse_primary_secondary(raw: str) -> Dict[str, Optional[str]]:
+    """Parse strings like 'Primary: Native L1; Secondary: Gas/Fee'."""
+    if not raw:
+        return {"primary": None, "secondary": None}
+
+    txt = str(raw).strip()
+    primary = None
+    secondary = None
+
+    # Allow separators like ';' or ','
+    parts = [p.strip() for p in txt.replace(",", ";").split(";") if p and p.strip()]
+    for p in parts:
+        low = p.lower()
+        if low.startswith("primary"):
+            val = p.split(":", 1)[1] if ":" in p else p
+            primary = val.strip() or None
+        elif low.startswith("secondary"):
+            val = p.split(":", 1)[1] if ":" in p else p
+            secondary = val.strip() or None
+
+    # Fallback: if no labels detected but we have 2 parts
+    if primary is None and secondary is None and len(parts) == 2:
+        primary, secondary = parts[0], parts[1]
+
+    return {"primary": primary, "secondary": secondary}
+
+
+def parse_token_category(wb) -> Optional[Dict[str, Any]]:
+    """Extract A1.1 from the 'Token Fundamentals & Governance' sheet."""
+    if FUNDAMENTALS_SHEET not in wb.sheetnames:
+        return None
+
+    ws = wb[FUNDAMENTALS_SHEET]
+    header_row = _find_header_row(ws)
+    if header_row is None:
+        return None
+
+    header_map = _build_header_map(ws, header_row)
+    qid_col = _find_first_matching_col(header_map, QUESTION_ID_HEADERS)
+    raw_col = _find_first_matching_col(header_map, RAW_RESPONSE_HEADERS)
+    conf_col = _find_first_matching_col(header_map, CONFIDENCE_HEADERS)
+    narrative_col = _find_first_matching_col(header_map, NARRATIVE_HEADERS)
+
+    if not qid_col or not raw_col:
+        return None
+
+    row = header_row + 1
+    while row <= ws.max_row:
+        qid_val = ws.cell(row=row, column=qid_col).value
+        if qid_val is None:
+            row += 1
+            continue
+        if str(qid_val).strip().upper() == "A1.1":
+            raw_val = ws.cell(row=row, column=raw_col).value
+            conf_val = ws.cell(row=row, column=conf_col).value if conf_col else None
+            nar_val = ws.cell(row=row, column=narrative_col).value if narrative_col else None
+
+            parsed = _parse_primary_secondary(str(raw_val or ""))
+            return {
+                "question_id": "A1.1",
+                "raw": str(raw_val or "").strip() or None,
+                "primary": parsed.get("primary"),
+                "secondary": parsed.get("secondary"),
+                "confidence": str(conf_val).strip() if conf_val else None,
+                "narrative": str(nar_val).strip() if nar_val else None,
+                "source_sheet": FUNDAMENTALS_SHEET,
+            }
+        row += 1
+
+    return None
+
+
 # ---- TOP-LEVEL ENTRY POINT ---------------------------------------------
 
 def parse_ddq(ddq_path: Path) -> Dict[str, Any]:
@@ -349,6 +428,7 @@ def parse_ddq(ddq_path: Path) -> Dict[str, Any]:
 
     domain_stats = parse_domain_stats(wb)
     board_escalations = parse_board_escalations(wb)
+    token_category = parse_token_category(wb)
 
     # Compute real board triggers per domain based on row-level flags
     counts = Counter()
@@ -369,6 +449,7 @@ def parse_ddq(ddq_path: Path) -> Dict[str, Any]:
     return {
         "domain_stats": domain_stats,
         "board_escalations": board_escalations,
+        "token_category": token_category,
         "snapshot": snapshot,
         "citations": citations,
         "project_description": project_description,
