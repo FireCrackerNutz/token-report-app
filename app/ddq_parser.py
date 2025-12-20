@@ -18,6 +18,11 @@ IGNORED_SHEETS = {
     "Overview",
 }
 
+# Sheets we scan for per-question responses (signal extraction). Usually these
+# are the domain tabs, but we keep it generic: any sheet with Question_ID +
+# Raw_Response is eligible.
+
+
 # Header patterns (lowercase substring matches) for Master_Summary
 DOMAIN_COL_HEADERS = ["domain"]
 WEIGHT_COL_HEADERS = ["weight"]
@@ -37,6 +42,10 @@ STALENESS_HEADERS = ["staleness_class"]
 # Header patterns for token fundamentals
 RAW_RESPONSE_HEADERS = ["raw_response", "raw response", "response"]
 CONFIDENCE_HEADERS = ["confidence"]
+
+# For generic response extraction we also want the following fields when present
+RAW_POINTS_HEADERS = ["raw_points", "raw points"]
+FINAL_SCORE_HEADERS = ["final_score", "final score"]
 
 
 # ---- ESCALATION CLASSIFICATION -----------------------------------------
@@ -333,6 +342,104 @@ def parse_board_escalations(wb) -> List[BoardEscalation]:
     return escalations
 
 
+# ---- PARSE PER-QUESTION RESPONSES (FOR SIGNALS) ------------------------
+
+def parse_question_responses(wb) -> Dict[str, Any]:
+    """Extract all per-question responses from eligible DDQ tabs.
+
+    This is used by the deterministic tag inference layer (signals + gating).
+
+    Output:
+      {
+        "responses": List[Dict[str, Any]],
+        "answers_by_key": Dict[str, List[Dict[str, Any]]],  # keyed by "<Sheet>::<QID>"
+      }
+    """
+
+    responses: List[Dict[str, Any]] = []
+    answers_by_key: Dict[str, List[Dict[str, Any]]] = {}
+
+    def key(sheet: str, qid: str) -> str:
+        return f"{sheet}::{str(qid or '').strip().upper()}"
+
+    for sheet_name in wb.sheetnames:
+        if sheet_name in IGNORED_SHEETS:
+            continue
+
+        ws = wb[sheet_name]
+        header_row = _find_header_row(ws)
+        if header_row is None:
+            continue
+
+        header_map = _build_header_map(ws, header_row)
+
+        qid_col = _find_first_matching_col(header_map, QUESTION_ID_HEADERS)
+        qtext_col = _find_first_matching_col(header_map, QUESTION_TEXT_HEADERS)
+        raw_col = _find_first_matching_col(header_map, RAW_RESPONSE_HEADERS)
+        conf_col = _find_first_matching_col(header_map, CONFIDENCE_HEADERS)
+        narrative_col = _find_first_matching_col(header_map, NARRATIVE_HEADERS)
+        citations_col = _find_first_matching_col(header_map, CITATIONS_HEADERS)
+        esc_flag_col = _find_first_matching_col(header_map, ESC_FLAG_HEADERS)
+        trigger_col = _find_first_matching_col(header_map, TRIGGER_RULE_HEADERS)
+        raw_points_col = _find_first_matching_col(header_map, RAW_POINTS_HEADERS)
+        final_score_col = _find_first_matching_col(header_map, FINAL_SCORE_HEADERS)
+
+        # Require at least Question_ID and Raw_Response to treat this as an answer sheet.
+        if not qid_col or not raw_col:
+            continue
+
+        for row in range(header_row + 1, ws.max_row + 1):
+            qid_val = ws.cell(row=row, column=qid_col).value
+            if qid_val is None or str(qid_val).strip() == "":
+                continue
+
+            qid = str(qid_val).strip()
+            qtext_val = ws.cell(row=row, column=qtext_col).value if qtext_col else None
+            raw_val = ws.cell(row=row, column=raw_col).value
+
+            # Skip section header rows (some templates have a label row with QID=None,
+            # but we already handled that; keep this extra guard for weird inputs).
+            if qid.lower() in {"none", "nan"}:
+                continue
+
+            conf_val = ws.cell(row=row, column=conf_col).value if conf_col else None
+            narrative_val = ws.cell(row=row, column=narrative_col).value if narrative_col else None
+            citations_val = ws.cell(row=row, column=citations_col).value if citations_col else None
+            esc_flag_val = ws.cell(row=row, column=esc_flag_col).value if esc_flag_col else None
+            trigger_val = ws.cell(row=row, column=trigger_col).value if trigger_col else None
+            raw_points_val = ws.cell(row=row, column=raw_points_col).value if raw_points_col else None
+            final_score_val = ws.cell(row=row, column=final_score_col).value if final_score_col else None
+
+            citations: List[str] = []
+            if citations_val:
+                for p in str(citations_val).split(";"):
+                    p = p.strip()
+                    if p:
+                        citations.append(p)
+
+            rec: Dict[str, Any] = {
+                "sheet": sheet_name,
+                "question_id": qid,
+                "question_text": str(qtext_val or "").strip() if qtext_val else "",
+                "raw_response": str(raw_val or "").strip() if raw_val is not None else "",
+                "confidence": str(conf_val or "").strip() if conf_val is not None else "",
+                "narrative_justification": str(narrative_val or "").strip() if narrative_val is not None else "",
+                "source_citations": citations,
+                "board_escalation_flag": str(esc_flag_val or "").strip() if esc_flag_val is not None else "",
+                "trigger_rule_description": str(trigger_val or "").strip() if trigger_val is not None else "",
+                "raw_points": raw_points_val,
+                "final_score": final_score_val,
+                "row_number": row,
+            }
+            responses.append(rec)
+            answers_by_key.setdefault(key(sheet_name, qid), []).append(rec)
+
+    return {
+        "responses": responses,
+        "answers_by_key": answers_by_key,
+    }
+
+
 # ---- PARSE TOKEN CATEGORY (A1.1) --------------------------------------
 
 def _parse_primary_secondary(raw: str) -> Dict[str, Optional[str]]:
@@ -429,6 +536,7 @@ def parse_ddq(ddq_path: Path) -> Dict[str, Any]:
     domain_stats = parse_domain_stats(wb)
     board_escalations = parse_board_escalations(wb)
     token_category = parse_token_category(wb)
+    response_pack = parse_question_responses(wb)
 
     # Compute real board triggers per domain based on row-level flags
     counts = Counter()
@@ -450,6 +558,8 @@ def parse_ddq(ddq_path: Path) -> Dict[str, Any]:
         "domain_stats": domain_stats,
         "board_escalations": board_escalations,
         "token_category": token_category,
+        "responses": response_pack["responses"],
+        "answers_by_key": response_pack["answers_by_key"],
         "snapshot": snapshot,
         "citations": citations,
         "project_description": project_description,

@@ -350,7 +350,8 @@ a:hover{ text-decoration-color: rgba(91,100,115,.9); }
 }
 .fact{ padding: 10px 10px; border: 1px solid var(--line); border-radius: 12px; background: #fcfcfd; }
 .factLabel{ font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
-.factValue{ font-weight: 800; margin-top: 3px; }
+.factValue{ font-weight: 800; margin-top: 3px; word-break: break-word; }
+.factValue a{ word-break: break-word; }
 .fact.span2{ grid-column: span 2; }
 .linkRow{ display:flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .linkChip{

@@ -208,8 +208,8 @@
               <div class="chip band band-{{ d.band_numeric|default(0) }}">{{ d.band_name }}</div>
             </div>
             <div class="metaRow">
-              <div class="muted small">Avg score: <strong>{{ d.avg_score }}</strong></div>
-              <div class="muted small">Weight: <strong>{{ d.weight }}</strong></div>
+              <div class="muted small">Avg score: <strong>{{ (d.avg_score or 0)|round(3) }}</strong></div>
+              <div class="muted small">Weight: <strong>{{ (d.weight or 0)|round(3) }}</strong></div>
               <div class="muted small">
                 Escalations: <strong>{{ d.board_escalation_count|default(0) }}</strong>
               </div>
@@ -378,6 +378,9 @@
               <li>
                 <div>{{ item.text }}</div>
                 {% if item.reason %}<div class="muted small">Why this matters: {{ item.reason }}</div>{% endif %}
+                {% if item.evidence %}
+                  <div class="muted small">DDQ evidence: {% for e in item.evidence %}{{ (e.sheet_name or e.sheet or '') }} {% if e.question_id %}{{ e.question_id }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}</div>
+                {% endif %}
               </li>
             {% endfor %}
             {% if (cat["items"]|default([]))|length == 0 %}
@@ -474,7 +477,20 @@
           <div class="fact span2">
             <div class="factLabel">Short description</div>
             <div class="factValue">{{ asset.description_short|default("—") }}</div>
+          
+          <div class="fact">
+            <div class="factLabel">Website</div>
+            <div class="factValue">
+              {% if asset.website %}<a href="{{ asset.website }}">{{ asset.website }}</a>{% else %}—{% endif %}
+            </div>
           </div>
+          <div class="fact">
+            <div class="factLabel">Whitepaper</div>
+            <div class="factValue">
+              {% if asset.whitepaper %}<a href="{{ asset.whitepaper }}">{{ asset.whitepaper }}</a>{% else %}—{% endif %}
+            </div>
+          </div>
+</div>
         </div>
 
         {% set links = asset.urls|default({}) %}

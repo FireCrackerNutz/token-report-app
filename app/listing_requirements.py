@@ -30,6 +30,34 @@ def _extract_effective_tag_ids(refined_risk_tags: List[Dict[str, Any]]) -> List[
     return sorted(ids)
 
 
+def _is_real_escalation_flag(flag: Any) -> bool:
+    """
+    Treat only 'real' escalation flags as triggers for requirement logic.
+
+    This MUST align with what we render as escalation cards in the report; otherwise
+    requirement thresholds (e.g. committee sign-off) can trigger off informational /
+    'No review' rows.
+    """
+    s = (str(flag) if flag is not None else "").strip().lower()
+    if not s:
+        return False
+
+    non_triggers = {
+        "no review",
+        "no-review",
+        "none",
+        "n/a",
+        "na",
+        "informational",
+        "info",
+        "information only",
+        "ok",
+        "okay",
+        "pass",
+    }
+    return s not in non_triggers
+
+
 def _build_context(
     overall_band_numeric: int,
     board_escalations: List[Any] | None,
@@ -41,8 +69,8 @@ def _build_context(
     Keys we expose to the rules:
       - tags: set of effective tag_ids
       - overall_band: int (1–5)
-      - total_escalations: int
-      - esg_escalations: int (Strategic/Reputational/ESG domain)
+      - total_escalations: int   (REAL triggers only; excludes "No review"/info rows)
+      - esg_escalations: int     (REAL triggers only)
       - technical_escalations: int
       - governance_escalations: int
       - reg_escalations: int
@@ -53,7 +81,8 @@ def _build_context(
     tags = set(_extract_effective_tag_ids(refined_risk_tags))
     escs = board_escalations or []
 
-    total_escalations = len(escs)
+    # Count only REAL escalation triggers (aligns with report cards)
+    total_escalations = 0
     esg_escalations = 0
     technical_escalations = 0
     governance_escalations = 0
@@ -61,6 +90,15 @@ def _build_context(
 
     for esc in escs:
         # Support both dataclass-style and dict-style access
+        flag = getattr(esc, "flag", None)
+        if flag is None and isinstance(esc, dict):
+            flag = esc.get("flag")
+
+        if not _is_real_escalation_flag(flag):
+            continue
+
+        total_escalations += 1
+
         domain_name = getattr(esc, "domain_name", None)
         if domain_name is None and isinstance(esc, dict):
             domain_name = esc.get("domain_name")
@@ -368,5 +406,4 @@ def build_listing_context(
     executive summaries) so they can stay consistent with the requirement
     engine’s posture/speculative/hard-control logic.
     """
-
     return _build_context(overall_band_numeric, board_escalations, refined_risk_tags)

@@ -1,0 +1,16 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Local cache
+.cache/
+*.log
+
+# Generated reports / snapshots
+data/report.html
+data/report.pdf
+data/report_snapshot.json
+
+# Optional: keep DDQs out of git (recommended if they contain client material)
+data/DDQ_*.xlsx

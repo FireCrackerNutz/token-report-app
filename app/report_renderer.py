@@ -133,7 +133,6 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
     from reportlab.lib.units import mm
-    from reportlab.lib.utils import ImageReader
     from reportlab.platypus import (
         SimpleDocTemplate,
         Paragraph,
@@ -173,6 +172,22 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
         for a, b in replacements.items():
             s = s.replace(a, b)
         return s
+
+    def _fmt_num(v: Any, nd: int = 3) -> str:
+        try:
+            if v is None or v == "":
+                return ""
+            return f"{float(v):.{nd}f}"
+        except Exception:
+            return _pdf_text(v)
+
+    def _soft_wrap_url(u: Any) -> str:
+        s = _pdf_text(u)
+        if not s:
+            return ""
+        # Insert line breaks after slashes so long URLs don't run off the page.
+        parts = s.split("/")
+        return "/<br/>".join(parts)
 
     def _utc_now_str() -> str:
         return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -311,16 +326,19 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
     # Token logo (best-effort)
     logo_reader = None
     logo_url = asset.get("logo_url")
+    logo_bytes: bytes | None = None
     if isinstance(logo_url, str) and logo_url.startswith("http"):
         try:
-            req = urllib.request.Request(logo_url, headers={"User-Agent": "token-report-app/1.0"})
+            req = urllib.request.Request(
+                logo_url,
+                headers={"User-Agent": "token-report-app/1.0"},
+            )
             with urllib.request.urlopen(req, timeout=6) as r:
-                data = r.read()
-            logo_reader = ImageReader(io.BytesIO(data))
+                logo_bytes = r.read()
         except Exception:
-            logo_reader = None
+            logo_bytes = None
 
-    # -----------------------------
+# -----------------------------
     # Styles
     # -----------------------------
     styles = getSampleStyleSheet()
@@ -394,10 +412,10 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
         Muted,
     )
 
-    if logo_reader is not None:
+    if logo_bytes is not None:
         try:
             # Use the same reader we already downloaded; render at a fixed size
-            logo_img = Image(logo_reader, width=12 * mm, height=12 * mm)
+            logo_img = Image(io.BytesIO(logo_bytes), width=12 * mm, height=12 * mm)
             logo_img.hAlign = "LEFT"
 
             header_tbl = Table(
@@ -531,8 +549,8 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
             rows.append([
                 _pdf_text(d.get("name") or d.get("code") or ""),
                 _pdf_text(d.get("band_name") or ""),
-                _pdf_text(d.get("avg_score") or ""),
-                _pdf_text(d.get("weight") or ""),
+                _fmt_num(d.get("avg_score"), nd=3),
+                _fmt_num(d.get("weight"), nd=3),
                 _pdf_text(d.get("board_escalation_count") or 0),
             ])
 
@@ -713,6 +731,19 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
                 if rsn:
                     parts.append(Paragraph(f"Why this matters: {_pdf_text(rsn)}", Small))
 
+                ev = item.get("evidence") or []
+                if ev:
+                    refs = []
+                    for e in ev[:4]:
+                        sh = (e.get("sheet_name") or e.get("sheet") or "").strip()
+                        qid = (e.get("question_id") or "").strip()
+                        if sh and qid:
+                            refs.append(f"{sh} {qid}")
+                        elif qid:
+                            refs.append(qid)
+                    if refs:
+                        parts.append(Paragraph(f"DDQ evidence: {_pdf_text('; '.join(refs))}", Small))
+
         story.append(Card(parts, left_bar=colors.HexColor("#c9ced8")))
 
     story.append(PageBreak())
@@ -771,14 +802,19 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
         )
     )
 
-    urls = asset.get("urls") or {}
+    # Pull useful external links directly from the fact sheet builder
+    desc = (asset.get("description_short") or "").strip()
+    if len(desc) > 280:
+        desc = desc[:277].rstrip() + "..."
+
     facts = [
-        ["Name", _pdf_text(asset.get("name") or "")],
-        ["Ticker", _pdf_text(asset.get("ticker") or "")],
-        ["Token type", _pdf_text(asset.get("token_type") or "")],
-        ["Primary chain", _pdf_text(asset.get("primary_chain") or "")],
-        ["Short description", _pdf_text(asset.get("description_short") or "")],
-        ["Website", _pdf_text(urls.get("website") or "")],
+        ["Name", Paragraph(_pdf_text(asset.get("name") or ""), P)],
+        ["Ticker", Paragraph(_pdf_text(asset.get("ticker") or ""), P)],
+        ["Token type", Paragraph(_pdf_text(asset.get("token_type") or ""), P)],
+        ["Primary chain", Paragraph(_pdf_text(asset.get("primary_chain") or ""), P)],
+        ["Short description", Paragraph(_pdf_text(desc), P)],
+        ["Website", Paragraph(_soft_wrap_url(asset.get("website") or ""), Small)],
+        ["Whitepaper", Paragraph(_soft_wrap_url(asset.get("whitepaper") or ""), Small)],
     ]
     ft = Table(facts, colWidths=[45 * mm, 120 * mm])
     ft.setStyle(
