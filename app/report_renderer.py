@@ -189,6 +189,25 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
         parts = s.split("/")
         return "/<br/>".join(parts)
 
+    def _headline_stats_text(stats: Any) -> str:
+        try:
+            items = list(stats or [])
+        except Exception:
+            items = []
+        if not items:
+            return "—"
+        parts = []
+        for it in items[:6]:
+            if not isinstance(it, dict):
+                continue
+            lbl = str(it.get("label") or "").strip()
+            val = str(it.get("value") or "").strip()
+            if not lbl or not val:
+                continue
+            parts.append(f"{lbl}: {val}")
+        return " • ".join(parts) if parts else "—"
+
+
     def _utc_now_str() -> str:
         return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
@@ -504,11 +523,294 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
         for q in open_qs[:6]:
             story.append(Paragraph(f"- {_pdf_text(q)}", P))
 
+    # -----------------------------
+    # Token fact sheet
+    # -----------------------------
+    story.append(Paragraph("Token fact sheet", H2))
+    story.append(
+        Paragraph(
+            "This fact sheet summarises key reference information about the token and its implementation. It is not a marketing document.",
+            Muted,
+        )
+    )
+    story.append(Spacer(1, 8))
+
+    # Pull useful external links directly from the fact sheet builder
+    name = (asset.get("name") or "").strip()
+    ticker = (asset.get("ticker") or "").strip()
+    token_type = (asset.get("token_type") or "").strip()
+    chain = (asset.get("primary_chain") or "").strip()
+
+    desc = (asset.get("description") or asset.get("description_short") or "").strip()
+    # Keep the PDF readable: clip, but allow a longer narrative than before.
+    if len(desc) > 560:
+        desc = desc[:557].rstrip() + "..."
+
+    # Badges (ticker / chain / type)
+    badges = []
+    if ticker:
+        badges.append(f"Ticker: {ticker}")
+    if chain:
+        badges.append(f"Chain: {chain}")
+    if token_type:
+        badges.append(f"Type: {token_type}")
+
+    badge_cells = [Paragraph(_pdf_text(b), Small) for b in badges] if badges else [Paragraph("—", Small)]
+    bt = Table([badge_cells], colWidths=[(165 * mm) / max(len(badge_cells), 1)] * len(badge_cells))
+    bt.setStyle(
+        TableStyle(
+            [
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+            ]
+        )
+    )
+    # Per-cell chip styling
+    for i in range(len(badge_cells)):
+        bt.setStyle(
+            TableStyle(
+                [
+                    ("BOX", (i, 0), (i, 0), 0.6, colors.HexColor("#dfe6ff")),
+                    ("BACKGROUND", (i, 0), (i, 0), colors.HexColor("#f3f6ff")),
+                ]
+            )
+        )
+
+    # Headline stats "HUD blobs"
+    stats = asset.get("headline_stats") or []
+    stat_cells = []
+    for s in stats[:8]:
+        label = _pdf_text(str(s.get("label") or "").upper())
+        val = _pdf_text(str(s.get("value") or "—"))
+        stat_cells.append(Paragraph(f'<font size="8" color="#56607a"><b>{label}</b></font><br/><font size="11"><b>{val}</b></font>', Small))
+
+    if not stat_cells:
+        stat_cells = [Paragraph("No headline stats available.", Muted)]
+
+    # Arrange stats in a 4-column grid
+    cols = 4 if len(stat_cells) >= 4 else max(len(stat_cells), 1)
+    rows = []
+    row = []
+    for c in stat_cells:
+        row.append(c)
+        if len(row) == cols:
+            rows.append(row)
+            row = []
+    if row:
+        # pad last row
+        while len(row) < cols:
+            row.append(Paragraph("", Small))
+        rows.append(row)
+
+    st = Table(rows, colWidths=[(165 * mm) / cols] * cols)
+    st.setStyle(
+        TableStyle(
+            [
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 7),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 7),
+                ("TOPPADDING", (0, 0), (-1, -1), 6),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ]
+        )
+    )
+    for r in range(len(rows)):
+        for c in range(cols):
+            st.setStyle(
+                TableStyle(
+                    [
+                        ("BOX", (c, r), (c, r), 0.6, colors.HexColor("#cfe0ff")),
+                        ("BACKGROUND", (c, r), (c, r), colors.white),
+                    ]
+                )
+            )
+
+    # Links row
+    website = (asset.get("website") or "").strip()
+    whitepaper = (asset.get("whitepaper") or "").strip()
+    link_rows = [
+        [Paragraph("Website", Small), Paragraph(_soft_wrap_url(website) if website else "—", Small)],
+        [Paragraph("Whitepaper", Small), Paragraph(_soft_wrap_url(whitepaper) if whitepaper else "—", Small)],
+    ]
+    lt = Table(link_rows, colWidths=[30 * mm, 135 * mm])
+    lt.setStyle(
+        TableStyle(
+            [
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 2),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+            ]
+        )
+    )
+
+    # Assemble HUD card
+    card_title = Paragraph(_pdf_text(name or "—"), H3)
+    card_content = [
+        card_title,
+        bt,
+        Spacer(1, 8),
+        st,
+        Spacer(1, 8),
+        Paragraph(_pdf_text(desc) if desc else "—", P),
+        Spacer(1, 6),
+        lt,
+    ]
+    story.append(
+        Card(
+            card_content,
+            bg=colors.HexColor("#fbfcff"),
+            stroke=colors.HexColor("#dfe6ff"),
+            left_bar=colors.HexColor("#4e74ff"),
+            radius=12,
+            pad=10,
+        )
+    )
+
     story.append(PageBreak())
+
+
 
     # -----------------------------
     # Risk dashboard
     # -----------------------------
+    
+    # -----------------------------
+    # Issuer & key people
+    # -----------------------------
+    ip = snapshot.get("issuer_profile") or {}
+    issuer = ip.get("issuer") or {}
+    people = ip.get("key_people") or []
+
+    story.append(Spacer(1, 10))
+    story.append(Paragraph("Issuer & key people", H2))
+    story.append(
+        Paragraph(
+            "Public corporate and leadership information used to anchor accountability and monitoring. Where reliable sources are unavailable, fields are shown as “Unknown”.",
+            Muted,
+        )
+    )
+    story.append(Spacer(1, 8))
+
+    def _u(v: Any) -> str:
+        s = _pdf_text(v)
+        return s if s else "Unknown"
+
+    def _link_or_text(v: Any) -> Paragraph:
+        u = _pdf_text(v)
+        if u and u != "Unknown":
+            return Paragraph(f'<link href="{u}">{_soft_wrap_url(u)}</link>', P)
+        return Paragraph("Unknown", P)
+
+    issuer_rows = [
+        [Paragraph("<b>Legal name</b>", Small), Paragraph(_u(issuer.get("legal_name")), P),
+         Paragraph("<b>Jurisdiction</b>", Small), Paragraph(_u(issuer.get("jurisdiction")), P)],
+        [Paragraph("<b>Entity type</b>", Small), Paragraph(_u(issuer.get("entity_type")), P),
+         Paragraph("<b>Registration #</b>", Small), Paragraph(_u(issuer.get("registration_number")), P)],
+        [Paragraph("<b>LEI</b>", Small), Paragraph(_u(issuer.get("lei")), P),
+         Paragraph("<b>Status</b>", Small), Paragraph(_u(issuer.get("status")), P)],
+        [Paragraph("<b>Registered address</b>", Small), Paragraph(_u(issuer.get("registered_address")), P),
+         Paragraph("<b>Website</b>", Small), _link_or_text(issuer.get("website"))],
+    ]
+    issuer_tbl = Table(issuer_rows, colWidths=[33*mm, 62*mm, 33*mm, 62*mm])
+    issuer_tbl.setStyle(
+        TableStyle(
+            [
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("LINEBELOW", (0, 0), (-1, -1), 0.25, colors.HexColor("#e7ecff")),
+            ]
+        )
+    )
+
+    issuer_evidence = issuer.get("evidence") or []
+    issuer_evidence_flows = []
+    if isinstance(issuer_evidence, list) and issuer_evidence:
+        issuer_evidence_flows.append(Spacer(1, 4))
+        issuer_evidence_flows.append(Paragraph("Evidence", Small))
+        for e in issuer_evidence[:6]:
+            if not isinstance(e, dict):
+                continue
+            url = _pdf_text(e.get("url"))
+            label = _pdf_text(e.get("label")) or url
+            if url:
+                issuer_evidence_flows.append(Paragraph(f'- <link href="{url}">{_pdf_text(label)}</link>', Small))
+
+    story.append(
+        Card(
+            [Paragraph("Issuer profile", H3), issuer_tbl] + issuer_evidence_flows,
+            left_bar=colors.HexColor("#4e74ff"),
+        )
+    )
+    story.append(Spacer(1, 8))
+
+    if people:
+        kp_rows = [[Paragraph("<b>Name</b>", Small), Paragraph("<b>Role</b>", Small),
+                    Paragraph("<b>Affiliation</b>", Small), Paragraph("<b>Confidence</b>", Small)]]
+        kp_evidence_lines = []
+        for p in people[:8]:
+            if not isinstance(p, dict):
+                continue
+            name = _u(p.get("name"))
+            role = _u(p.get("role"))
+            aff = _u(p.get("affiliation"))
+            conf = _u(p.get("confidence"))
+            kp_rows.append([Paragraph(name, P), Paragraph(role, P), Paragraph(aff, P), Paragraph(conf, P)])
+
+            ev = p.get("evidence") or []
+            if isinstance(ev, list) and ev:
+                # show up to 2 evidence links per person (keeps PDF tidy)
+                links = []
+                for e in ev[:2]:
+                    if not isinstance(e, dict):
+                        continue
+                    url = _pdf_text(e.get("url"))
+                    label = _pdf_text(e.get("label")) or url
+                    if url:
+                        links.append(f'<link href="{url}">{_pdf_text(label)}</link>')
+                if links:
+                    kp_evidence_lines.append(Paragraph(f'{_pdf_text(name)} — ' + " | ".join(links), Small))
+
+        kp_tbl = Table(kp_rows, colWidths=[56*mm, 46*mm, 52*mm, 26*mm])
+        kp_tbl.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#f3f6ff")),
+                    ("LINEBELOW", (0, 0), (-1, 0), 0.5, colors.HexColor("#dfe6ff")),
+                    ("LINEBELOW", (0, 1), (-1, -1), 0.25, colors.HexColor("#eef2ff")),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                    ("TOPPADDING", (0, 0), (-1, -1), 4),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ]
+            )
+        )
+
+        story.append(
+            Card(
+                [Paragraph("Key people", H3), kp_tbl]
+                + ([Spacer(1, 4), Paragraph("Evidence", Small)] + kp_evidence_lines if kp_evidence_lines else []),
+                left_bar=colors.HexColor("#7c3aed"),
+            )
+        )
+    else:
+        story.append(
+            Card(
+                [Paragraph("Key people", H3), Paragraph("Unknown — no reliable public disclosures were found in this run.", Muted)],
+                left_bar=colors.HexColor("#7c3aed"),
+            )
+        )
+
+    story.append(PageBreak())
+
     story.append(Paragraph("Risk dashboard — high-level profile", H2))
     story.append(
         Paragraph(
@@ -788,52 +1090,6 @@ def write_report_pdf(snapshot: Dict[str, Any], *, out_path: str | Path) -> Path:
         for r in recommended:
             story.append(Spacer(1, 6))
             story.append(_req_card(r, colors.HexColor("#a7c7ff")))
-
-    story.append(PageBreak())
-
-    # -----------------------------
-    # Token fact sheet
-    # -----------------------------
-    story.append(Paragraph("Token fact sheet", H2))
-    story.append(
-        Paragraph(
-            "This fact sheet summarises key reference information about the token and its implementation. It is not a marketing document.",
-            Muted,
-        )
-    )
-
-    # Pull useful external links directly from the fact sheet builder
-    desc = (asset.get("description_short") or "").strip()
-    if len(desc) > 280:
-        desc = desc[:277].rstrip() + "..."
-
-    facts = [
-        ["Name", Paragraph(_pdf_text(asset.get("name") or ""), P)],
-        ["Ticker", Paragraph(_pdf_text(asset.get("ticker") or ""), P)],
-        ["Token type", Paragraph(_pdf_text(asset.get("token_type") or ""), P)],
-        ["Primary chain", Paragraph(_pdf_text(asset.get("primary_chain") or ""), P)],
-        ["Short description", Paragraph(_pdf_text(desc), P)],
-        ["Website", Paragraph(_soft_wrap_url(asset.get("website") or ""), Small)],
-        ["Whitepaper", Paragraph(_soft_wrap_url(asset.get("whitepaper") or ""), Small)],
-    ]
-    ft = Table(facts, colWidths=[45 * mm, 120 * mm])
-    ft.setStyle(
-        TableStyle(
-            [
-                ("BOX", (0, 0), (-1, -1), 0.8, colors.HexColor("#e6e8ee")),
-                ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#e6e8ee")),
-                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#eef2ff")),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                ("FONTSIZE", (0, 0), (-1, -1), 9),
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("LEFTPADDING", (0, 0), (-1, -1), 6),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
-                ("TOPPADDING", (0, 0), (-1, -1), 5),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-            ]
-        )
-    )
-    story.append(ft)
 
     doc.build(story, onFirstPage=_decorate, onLaterPages=_decorate)
     return out_path

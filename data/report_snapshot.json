@@ -1,42 +1,41 @@
 {
   "risk_dashboard": {
     "overall_band": {
-      "numeric": 3,
-      "name": "Medium"
+      "numeric": 4,
+      "name": "Medium-High"
     },
     "band_distribution": {
-      "Medium": 0.7000000000000001,
-      "Low": 0.25,
-      "Medium-High": 0.05
+      "Medium-High": 0.5,
+      "Medium": 0.5
     },
     "domains": [
       {
         "code": "Token Fundamentals & Governance",
         "name": "Token Fundamentals & Governance",
         "weight": 0.15,
-        "avg_score": 8.803030303030303,
-        "band_name": "Medium",
-        "band_numeric": 3,
+        "avg_score": 10.834848484848486,
+        "band_name": "Medium-High",
+        "band_numeric": 4,
         "has_board_escalation": true,
-        "board_escalation_count": 1
+        "board_escalation_count": 2
       },
       {
         "code": "Regulatory & Legal Risk",
         "name": "Regulatory & Legal Risk",
         "weight": 0.2,
-        "avg_score": 7.427083333333333,
-        "band_name": "Medium",
-        "band_numeric": 3,
-        "has_board_escalation": true,
-        "board_escalation_count": 1
+        "avg_score": 9.666666666666666,
+        "band_name": "Medium-High",
+        "band_numeric": 4,
+        "has_board_escalation": false,
+        "board_escalation_count": 0
       },
       {
         "code": "AML & Sanctions Risk",
         "name": "AML & Sanctions Risk",
         "weight": 0.25,
-        "avg_score": 3.3625,
-        "band_name": "Low",
-        "band_numeric": 2,
+        "avg_score": 6.85,
+        "band_name": "Medium",
+        "band_numeric": 3,
         "has_board_escalation": false,
         "board_escalation_count": 0
       },
@@ -44,31 +43,31 @@
         "code": "Technical & Protocol Security",
         "name": "Technical & Protocol Security",
         "weight": 0.2,
-        "avg_score": 8.564102564102564,
-        "band_name": "Medium",
-        "band_numeric": 3,
-        "has_board_escalation": true,
-        "board_escalation_count": 6
-      },
-      {
-        "code": "Market & Liquidity Integrity",
-        "name": "Market & Liquidity Integrity",
-        "weight": 0.15,
-        "avg_score": 8.618421052631579,
+        "avg_score": 8.006410256410257,
         "band_name": "Medium",
         "band_numeric": 3,
         "has_board_escalation": false,
         "board_escalation_count": 0
       },
       {
-        "code": "Strategic, Reputational & ESG",
-        "name": "Strategic, Reputational & ESG",
-        "weight": 0.05,
-        "avg_score": 10.0,
+        "code": "Market & Liquidity Integrity",
+        "name": "Market & Liquidity Integrity",
+        "weight": 0.15,
+        "avg_score": 9.263157894736842,
         "band_name": "Medium-High",
         "band_numeric": 4,
         "has_board_escalation": true,
-        "board_escalation_count": 3
+        "board_escalation_count": 1
+      },
+      {
+        "code": "Strategic, Reputational & ESG",
+        "name": "Strategic, Reputational & ESG",
+        "weight": 0.05,
+        "avg_score": 7.368421052631579,
+        "band_name": "Medium",
+        "band_numeric": 3,
+        "has_board_escalation": true,
+        "board_escalation_count": 1
       }
     ]
   },
@@ -81,191 +80,65 @@
       "question_text": "How many distinct parties (independent entities or individuals) effectively control the treasury keys for the main treasury and ecosystem funds? Choose one: DAO, \u22654, \u22643, Single.",
       "flag": "Review Required",
       "trigger_rule": "Triggers Board review if treasury control is highly concentrated (Single or \u22643 distinct parties) and at least one of the following is true: treasury rules are not published, disbursements are not transparently tracked, there is no clear separation of duties, no periodic treasury reporting, or there has been a material treasury controversy.",
-      "raw_narrative": "Available disclosures describe World Liberty Financial as highly centralized, with majority equity and control held via a Trump\u2011family\u2013controlled holding company rather than a dispersed DAO. There is evidence they use Safe multisig wallets for institutional treasury operations, but no public detail on independent, distributed signers. In practice, treasury authority appears consolidated under a single corporate/group controller, not a community DAO or clearly \u22654 independent parties. However, keyholder structure is not transparently disclosed, so confidence is low.",
-      "most_recent_source_date": "2025-11-25 00:00:00",
+      "raw_narrative": "Available public information suggests the main community/marketing treasury associated with the Las Vegas Sphere campaign is controlled by a multisig wallet with three named signers (Ansem, Edward, Quasi). There is no credible evidence of a broader DAO or \u22654-party multisig governing primary treasury or ecosystem funds, so the most supportable classification is \u22643 distinct controlling parties. However, disclosures are informal and may be incomplete, so confidence is medium.",
+      "most_recent_source_date": "2024-05-19 00:00:00",
       "staleness_class": "Critical\u2013Fast",
       "citations": [
         {
-          "label": "https://www.reuters.com/business/finance/how-trump-family-took-over-world-liberty-financial-it-raised-hundreds-millions-2025-03-31/",
-          "url": "https://www.reuters.com/business/finance/how-trump-family-took-over-world-liberty-financial-it-raised-hundreds-millions-2025-03-31/"
+          "label": "https://wif-sphere.vercel.app/",
+          "url": "https://wif-sphere.vercel.app/"
         },
         {
-          "label": "https://en.wikipedia.org/wiki/World_Liberty_Financial",
-          "url": "https://en.wikipedia.org/wiki/World_Liberty_Financial"
-        },
-        {
-          "label": "https://www.mexc.com/az-AZ/news/just-in-ethereum-foundation-moves-entire-650m-treasury-to-safe-multisig/139156",
-          "url": "https://www.mexc.com/az-AZ/news/just-in-ethereum-foundation-moves-entire-650m-treasury-to-safe-multisig/139156"
+          "label": "https://www.reddit.com/r/dogwifhat/comments/1cvbqae",
+          "url": "https://www.reddit.com/r/dogwifhat/comments/1cvbqae"
         }
       ]
     },
     {
-      "id": "Regulatory & Legal Risk_C1.5",
-      "domain_code": "Regulatory & Legal Risk",
-      "domain_name": "Regulatory & Legal Risk",
-      "question_id": "C1.5",
-      "question_text": "Does a single organisation or person have unilateral ability to pause/disable the protocol? (No / Limited / Yes / Unknown)",
+      "id": "Token Fundamentals & Governance_D1",
+      "domain_code": "Token Fundamentals & Governance",
+      "domain_name": "Token Fundamentals & Governance",
+      "question_id": "D1",
+      "question_text": "Does the project have a current whitepaper or technical documentation available from an official source? (Yes / No / Outdated / Unclear)",
       "flag": "Review Required",
-      "trigger_rule": "PRIN 12 \u2014 Foreseeable harm: unilateral pause/disable control requires board visibility.",
-      "raw_narrative": "The WLFI ERC\u201120 contract is implemented via an OpenZeppelin TransparentUpgradeableProxy, meaning an admin (via ProxyAdmin/owner) can upgrade the implementation arbitrarily and thereby add or enforce pause/lock logic, effectively disabling the token or protocol without holder consent.\nReuters has also reported that a major investor\u2019s WLFI tokens were centrally frozen, indicating active unilateral control by the team over token functionality.",
-      "most_recent_source_date": "2025-11-25 00:00:00",
-      "staleness_class": "Critical\u2013Fast",
-      "citations": [
-        {
-          "label": "https://etherscan.io/token/0xda5e1988097297dcdc1f90d4dfe7909e847cbef6#code",
-          "url": "https://etherscan.io/token/0xda5e1988097297dcdc1f90d4dfe7909e847cbef6#code"
-        },
-        {
-          "label": "https://www.reuters.com/business/finance/trump-crypto-backer-justin-sun-says-his-world-liberty-tokens-frozen-2025-09-05/",
-          "url": "https://www.reuters.com/business/finance/trump-crypto-backer-justin-sun-says-his-world-liberty-tokens-frozen-2025-09-05/"
-        }
-      ]
-    },
-    {
-      "id": "Technical & Protocol Security_A3.4",
-      "domain_code": "Technical & Protocol Security",
-      "domain_name": "Technical & Protocol Security",
-      "question_id": "A3.4",
-      "question_text": "Do audits or reviews flag recurring code-quality issues or anti-patterns? Choose: No notable issues, Some issues flagged, Structural/recurring issues, Unknown.",
-      "flag": "Review Required",
-      "trigger_rule": "Escalate where structural or recurring code-quality issues are reported with at least medium confidence.",
-      "raw_narrative": "There is no published formal smart-contract audit for WLFI, but independent investigative reviews flag structural issues: a proxy-based architecture with minting ability and no robust safeguards, plus concerning token movements (e.g., from burn to multisig) that create ongoing centralization and misuse risk. The token contract is an upgradeable proxy, reinforcing the potential for recurring governance and upgrade-risk anti-patterns rather than isolated bugs.",
-      "most_recent_source_date": "2025-11-25 00:00:00",
+      "trigger_rule": "Escalate only if no official whitepaper/technical documentation exists (Answer = \"No\").",
+      "raw_narrative": "Major exchanges and third\u2011party overviews describe dogwifhat as a meme coin with no roadmap, utility or active technical development, and there is no distinct whitepaper or technical doc linked beyond the generic marketing homepage, which AscendEX also labels as the \u201cWhitepaper.\u201d This indicates there is no substantive, dedicated whitepaper or technical documentation currently available from an official source.",
+      "most_recent_source_date": "2025-12-14 00:00:00",
       "staleness_class": "Background\u2013Slow",
       "citations": [
         {
-          "label": "https://etherscan.io/token/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6#code",
-          "url": "https://etherscan.io/token/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6#code"
+          "label": "https://ascendex.com/en/support/articles/94312-dogwifhat-wif",
+          "url": "https://ascendex.com/en/support/articles/94312-dogwifhat-wif"
         },
         {
-          "label": "https://coincub.com/world-liberty-financial-wlfi/",
-          "url": "https://coincub.com/world-liberty-financial-wlfi/"
-        },
-        {
-          "label": "https://www.reddit.com/r/u_Meta-Face/comments/1n115pf",
-          "url": "https://www.reddit.com/r/u_Meta-Face/comments/1n115pf"
+          "label": "https://coinmarketcap.com/cmc-ai/dogwifhat/what-is/",
+          "url": "https://coinmarketcap.com/cmc-ai/dogwifhat/what-is/"
         }
       ]
     },
     {
-      "id": "Technical & Protocol Security_B1.3",
-      "domain_code": "Technical & Protocol Security",
-      "domain_name": "Technical & Protocol Security",
-      "question_id": "B1.3",
-      "question_text": "Do audits or credible reviews identify recurring design-level risk patterns (e.g., fragile liquidation logic, complex state machines)? Choose: No notable patterns, Some higher-risk patterns, Multiple/structural higher-risk patterns, Unknown.",
+      "id": "Market & Liquidity Integrity_E2.3",
+      "domain_code": "Market & Liquidity Integrity",
+      "domain_name": "Market & Liquidity Integrity",
+      "question_id": "E2.3",
+      "question_text": "Have any regulators or major exchanges issued explicit warnings or risk notices specifically about this token\u2019s trading behaviour or market integrity? Choose: No specific warnings found, Generic/high-level risk warnings only, Specific warnings about this token, Unknown.",
       "flag": "Review Required",
-      "trigger_rule": "Escalate where multiple or structural higher-risk design patterns are identified with at least medium confidence.",
-      "raw_narrative": "A third\u2011party review (MEFAI) describes WLFI as using an upgradeable proxy with unrestricted minting authority and no effective safeguards, calling out \u201cmajor structural risks.\u201d This implies persistent governance/admin risk at the design level, not just one\u2011off bugs. Separately, WLFI has frozen and blacklisted hundreds of wallets and deployed new smart contract logic to reallocate funds, highlighting powerful central controls that are repeatedly exercised. Together, these indicate multiple structural, design\u2011level risk patterns rather than isolated issues.",
-      "most_recent_source_date": "2025-11-25 00:00:00",
-      "staleness_class": "Background\u2013Slow",
-      "citations": [
-        {
-          "label": "https://www.reddit.com/r/u_Meta-Face/comments/1n115pf",
-          "url": "https://www.reddit.com/r/u_Meta-Face/comments/1n115pf"
-        },
-        {
-          "label": "https://codeum.org/news/world-liberty-financial-wallet-blacklist-reason",
-          "url": "https://codeum.org/news/world-liberty-financial-wallet-blacklist-reason"
-        },
-        {
-          "label": "https://cryptonews.net/news/security/32014061/",
-          "url": "https://cryptonews.net/news/security/32014061/"
-        }
-      ]
-    },
-    {
-      "id": "Technical & Protocol Security_B3.2",
-      "domain_code": "Technical & Protocol Security",
-      "domain_name": "Technical & Protocol Security",
-      "question_id": "B3.2",
-      "question_text": "How is any emergency pause or kill-switch implemented? Choose: No pause/kill-switch, Controlled pause with multisig/timelock, Centralised pause/kill with minimal checks, Unknown.",
-      "flag": "Review Required",
-      "trigger_rule": "Escalate where centralised pause/kill can be invoked with minimal checks and at least medium confidence.",
-      "raw_narrative": "The WLFI token contract at 0xdA5e\u2026CBeF6 is an OpenZeppelin TransparentUpgradeableProxy. Control of the proxy\u2019s ProxyAdmin can upgrade the implementation at any time via upgradeToAndCall, allowing the admin to deploy and switch to an implementation that freezes or blocks transfers, effectively serving as a centralised kill\u2011switch. There is no on\u2011chain timelock or enforced multi\u2011sig visible at the proxy level, so safeguards beyond this admin are unclear.",
-      "most_recent_source_date": "2025-11-25 00:00:00",
-      "staleness_class": "Evergreen\u2013No Penalty",
-      "citations": [
-        {
-          "label": "https://etherscan.io/token/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6#code",
-          "url": "https://etherscan.io/token/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6#code"
-        },
-        {
-          "label": "https://etherscan.io/address/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6",
-          "url": "https://etherscan.io/address/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6"
-        },
-        {
-          "label": "https://www.reddit.com/r/u_Meta-Face/comments/1n115pf",
-          "url": "https://www.reddit.com/r/u_Meta-Face/comments/1n115pf"
-        }
-      ]
-    },
-    {
-      "id": "Technical & Protocol Security_C1.3",
-      "domain_code": "Technical & Protocol Security",
-      "domain_name": "Technical & Protocol Security",
-      "question_id": "C1.3",
-      "question_text": "What is the scope of privileged functions? Choose: Narrow, Moderate, Broad/high-impact, Unknown.",
-      "flag": "Review Required",
-      "trigger_rule": "Escalate where privileged function scope is broad/high-impact with at least medium confidence.",
-      "raw_narrative": "The WLFI ERC\u201120 contract on Ethereum is a TransparentUpgradeableProxy using OpenZeppelin\u2019s proxy pattern, with control via a ProxyAdmin. This design allows the admin to change the implementation contract using upgradeTo/upgradeToAndCall, which can fundamentally alter token logic (e.g., transfers, balances, pausing, minting/burning) and therefore user rights. Such upgrade authority is considered a high\u2011impact privileged function scope, even if specific current implementation details are not fully surfaced.",
-      "most_recent_source_date": "2025-11-25 00:00:00",
-      "staleness_class": "Evergreen\u2013No Penalty",
-      "citations": [
-        {
-          "label": "https://etherscan.io/token/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6",
-          "url": "https://etherscan.io/token/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6"
-        },
-        {
-          "label": "https://governance.worldlibertyfinancial.com/t/proposal-make-wlfi-token-tradable/17772",
-          "url": "https://governance.worldlibertyfinancial.com/t/proposal-make-wlfi-token-tradable/17772"
-        }
-      ]
-    },
-    {
-      "id": "Technical & Protocol Security_C4.2",
-      "domain_code": "Technical & Protocol Security",
-      "domain_name": "Technical & Protocol Security",
-      "question_id": "C4.2",
-      "question_text": "Are there credible historical reports of key compromise relating to the project? Choose: No incidents, Minor incident fully resolved, Significant compromise, Unknown.",
-      "flag": "Review Required",
-      "trigger_rule": "Escalate where significant key compromise has occurred with at least medium confidence.",
-      "raw_narrative": "There have been large-scale security incidents affecting WLFI holders. Multiple reports describe phishing and EIP-7702\u2013based exploits that compromised user wallets and drained substantial WLFI holdings. In response, WLFI froze 272 compromised wallets and later executed an emergency burn-and-reallocation of about 166.7M WLFI (~$22M) from hacked addresses to recovery wallets. These user key and wallet compromises are material and ongoing, not minor or fully resolved.",
-      "most_recent_source_date": "2025-11-25 00:00:00",
+      "trigger_rule": "Escalate where regulators or major exchanges have issued specific warnings about this token\u2019s market integrity with at least medium confidence.",
+      "raw_narrative": "Major exchanges have issued token\u2011specific risk disclosures for WIF. Gemini\u2019s listing announcement for dogwifhat includes a dedicated warning that WIF is a meme token with no defined utility, whose value may depend solely on continued demand and that it may experience extreme volatility, especially if large, concentrated holdings are liquidated quickly. Canadian platforms like Wealthsimple and Newton also publish WIF\u2011specific crypto asset risk statements. These go beyond generic crypto warnings and target WIF in particular.",
+      "most_recent_source_date": "46001",
       "staleness_class": "Critical\u2013Fast",
       "citations": [
         {
-          "label": "https://crypto.news/world-liberty-financial-wlfi-wallet-breach-2025/",
-          "url": "https://crypto.news/world-liberty-financial-wlfi-wallet-breach-2025/"
+          "label": "https://www.gemini.com/blog/dogwifhat-is-now-available-on-gemini",
+          "url": "https://www.gemini.com/blog/dogwifhat-is-now-available-on-gemini"
         },
         {
-          "label": "https://cointelegraph.com/news/wlfi-hack-attempts-blacklisting-token-launch",
-          "url": "https://cointelegraph.com/news/wlfi-hack-attempts-blacklisting-token-launch"
+          "label": "https://help.wealthsimple.com/hc/en-ca/articles/35264016165659-Dogwifhat-WIF",
+          "url": "https://help.wealthsimple.com/hc/en-ca/articles/35264016165659-Dogwifhat-WIF"
         },
         {
-          "label": "https://www.gate.com/crypto-wiki/article/what-are-the-security-risks-and-vulnerabilities-of-wlfi-s-smart-contracts",
-          "url": "https://www.gate.com/crypto-wiki/article/what-are-the-security-risks-and-vulnerabilities-of-wlfi-s-smart-contracts"
-        }
-      ]
-    },
-    {
-      "id": "Technical & Protocol Security_D2.1",
-      "domain_code": "Technical & Protocol Security",
-      "domain_name": "Technical & Protocol Security",
-      "question_id": "D2.1",
-      "question_text": "How concentrated is the validator or sequencer set? Choose: Low concentration (top 5 <25%), Moderate (25\u201350%), High concentration (top 5 >50%), Unknown.",
-      "flag": "Review Required",
-      "trigger_rule": "Escalate where validator/sequencer power is highly concentrated with at least medium confidence.",
-      "raw_narrative": "WLFI is an ERC-20 token on Ethereum, so its validator decentralization depends on Ethereum\u2019s proof\u2011of\u2011stake set. Ethereum staking is significantly concentrated: Lido, Coinbase, Kraken, and Binance together controlled over half of all staked ETH, and more recent data still shows Lido plus major CEXs holding very large aggregate shares. This implies the top 5 validator entities secure well over 50% of stake, so the validator set is highly concentrated.",
-      "most_recent_source_date": "2025-11-25 00:00:00",
-      "staleness_class": "Operational\u2013Medium",
-      "citations": [
-        {
-          "label": "https://techcrunch.com/2022/09/14/lido-coinbase-kraken-and-binance-stake-majority-of-eth-does-that-matter/",
-          "url": "https://techcrunch.com/2022/09/14/lido-coinbase-kraken-and-binance-stake-majority-of-eth-does-that-matter/"
-        },
-        {
-          "label": "https://www.datawallet.com/crypto/ethereum-staking-statistics-and-trends",
-          "url": "https://www.datawallet.com/crypto/ethereum-staking-statistics-and-trends"
+          "label": "https://help.newton.co/hc/en-us/articles/34081225609107-Crypto-Asset-Statement-dogwifhat-WIF",
+          "url": "https://help.newton.co/hc/en-us/articles/34081225609107-Crypto-Asset-Statement-dogwifhat-WIF"
         }
       ]
     },
@@ -277,73 +150,17 @@
       "question_text": "To what extent does the project appear to rely on token price appreciation and speculation rather than underlying product usage or cash flows? Choose: Primarily utility/usage-driven, Mixed (both usage and speculation), Heavily dependent on speculation/narrative, Unknown.",
       "flag": "Review Required",
       "trigger_rule": "Escalate where the token is assessed as heavily dependent on speculation or narrative with at least medium confidence, indicating limited underlying utility.",
-      "raw_narrative": "Available information emphasizes large WLFI governance token raises (over $550\u2013590M) and high fully diluted valuations, with tokens sold in pre-sales to investors and later governance votes focused on enabling secondary-market trading. While a DeFi platform and USD1 stablecoin are planned, key lending/borrowing and app products are still \u201ccoming soon,\u201d so current value drivers appear dominated by token sales and market expectations rather than mature, usage-linked cash flows.",
-      "most_recent_source_date": null,
+      "raw_narrative": "Dogwifhat (WIF) is explicitly positioned as a meme token on Solana with no clear underlying protocol utility, revenue model, or product usage driving value. Its prominence is tied to viral branding and trading interest rather than cash\u2011flow-generating applications or defined utility functions, indicating reliance on price appreciation and speculative narrative rather than fundamentals.",
+      "most_recent_source_date": "45627",
       "staleness_class": "Evergreen\u2013No Penalty",
       "citations": [
         {
-          "label": "https://www.businesswire.com/news/home/20250317855322/en/Trump-Inspired-World-Liberty-Financial-Closes-%24550-Million-Across-Token-Sales",
-          "url": "https://www.businesswire.com/news/home/20250317855322/en/Trump-Inspired-World-Liberty-Financial-Closes-%24550-Million-Across-Token-Sales"
+          "label": "https://www.coingecko.com/en/coins/dogwifhat",
+          "url": "https://www.coingecko.com/en/coins/dogwifhat"
         },
         {
-          "label": "https://www.coindesk.com/markets/2025/03/14/trump-backed-world-liberty-financial-wlfi-completes-token-sale",
-          "url": "https://www.coindesk.com/markets/2025/03/14/trump-backed-world-liberty-financial-wlfi-completes-token-sale"
-        },
-        {
-          "label": "https://worldlibertyfinancial.com/",
-          "url": "https://worldlibertyfinancial.com/"
-        }
-      ]
-    },
-    {
-      "id": "Strategic, Reputational & ESG_C1.2",
-      "domain_code": "Strategic, Reputational & ESG",
-      "domain_name": "Strategic, Reputational & ESG",
-      "question_id": "C1.2",
-      "question_text": "Have there been major public scandals or controversies (non-technical) associated with the project (e.g., investor losses, misleading marketing, governance blow-ups)? Choose: No major controversies identified, Some controversy but limited in scope, Major or repeated controversies affecting many users, Unknown.",
-      "flag": "Review Required",
-      "trigger_rule": "Escalate where major or repeated controversies affecting many users are documented with at least medium confidence.",
-      "raw_narrative": "There is significant, ongoing controversy around World Liberty Financial: major media have highlighted unprecedented conflicts of interest between the Trump family\u2019s control of WLFI/its USD1 stablecoin and U.S. government policy; large politically connected and offshore investors (e.g., Abu Dhabi entities, Justin Sun) have raised ethics and governance concerns; and token freezes, swap-deal allegations, and critical public commentary have sparked sustained scrutiny across the crypto sector and mainstream press.",
-      "most_recent_source_date": null,
-      "staleness_class": "Operational\u2013Medium",
-      "citations": [
-        {
-          "label": "https://en.wikipedia.org/wiki/World_Liberty_Financial",
-          "url": "https://en.wikipedia.org/wiki/World_Liberty_Financial"
-        },
-        {
-          "label": "https://coinmarketcap.com/academy/article/world-liberty-financial-denies-allegations-of-token-sales-and-preferential-deals-amid-controversy-and-market-scrutiny",
-          "url": "https://coinmarketcap.com/academy/article/world-liberty-financial-denies-allegations-of-token-sales-and-preferential-deals-amid-controversy-and-market-scrutiny"
-        },
-        {
-          "label": "https://www.reuters.com/business/finance/uae-fund-buys-100-million-trumps-world-liberty-tokens-2025-06-27/",
-          "url": "https://www.reuters.com/business/finance/uae-fund-buys-100-million-trumps-world-liberty-tokens-2025-06-27/"
-        }
-      ]
-    },
-    {
-      "id": "Strategic, Reputational & ESG_D1.2",
-      "domain_code": "Strategic, Reputational & ESG",
-      "domain_name": "Strategic, Reputational & ESG",
-      "question_id": "D1.2",
-      "question_text": "Are there credible ESG-related controversies or criticisms specifically linked to this project (environmental, social or governance)? Choose: No material ESG controversies identified, Some ESG criticisms but limited, Significant or repeated ESG controversies, Unknown.",
-      "flag": "Review Required",
-      "trigger_rule": "Escalate where significant or repeated ESG-related controversies are documented with at least medium confidence.",
-      "raw_narrative": "There are multiple, sustained ESG-related controversies tied to WLFI. Major press and ethics experts have raised conflict-of-interest concerns over Trump family enrichment and government-policy overlap around WLFI and its USD1 stablecoin, including a $2B Abu Dhabi-related deal and chip export decisions benefiting associated parties. The protocol has also drawn governance criticism for its ability to blacklist wallets and freeze a large holder\u2019s assets, challenging decentralization claims. These issues indicate significant and ongoing ESG controversy, not isolated criticism.",
-      "most_recent_source_date": null,
-      "staleness_class": "Background\u2013Slow",
-      "citations": [
-        {
-          "label": "https://www.reuters.com/world/middle-east/abu-dhabis-mgx-use-trump-linked-stablecoin-2-billion-binance-deal-2025-05-01/",
-          "url": "https://www.reuters.com/world/middle-east/abu-dhabis-mgx-use-trump-linked-stablecoin-2-billion-binance-deal-2025-05-01/"
-        },
-        {
-          "label": "https://www.politico.com/news/2025/03/25/trump-family-crypto-venture-to-launch-a-stablecoin-00247455",
-          "url": "https://www.politico.com/news/2025/03/25/trump-family-crypto-venture-to-launch-a-stablecoin-00247455"
-        },
-        {
-          "label": "https://info.arkm.com/research/world-liberty-financial-wlfi-trump-tokenomics-stablecoin-products",
-          "url": "https://info.arkm.com/research/world-liberty-financial-wlfi-trump-tokenomics-stablecoin-products"
+          "label": "https://coinmarketcap.com/currencies/dogwifhat/",
+          "url": "https://coinmarketcap.com/currencies/dogwifhat/"
         }
       ]
     }
@@ -352,96 +169,93 @@
     {
       "domain_code": "Token Fundamentals & Governance",
       "domain_name": "Token Fundamentals & Governance",
-      "band_name": "Medium",
-      "band_numeric": 3,
-      "avg_score": 8.803030303030303,
+      "band_name": "Medium-High",
+      "band_numeric": 4,
+      "avg_score": 10.834848484848486,
       "has_board_escalation": true,
-      "board_escalation_count": 1,
-      "one_line": "Governance-focused ERC-20 with a corporate legal anchor and strong market interest; limited live utility, speculative demand and holder/unlock concentration raise material listing and monitoring considerations.",
+      "board_escalation_count": 2,
+      "one_line": "Speculative Solana meme token with anonymous origin, no protocol utility and unknown governance, posing elevated market, legal and reputational risk that requires conservative controls and active monitoring.",
       "strengths": [
-        "Clearly defined governance token role with documented voting use and at least one governance vote executed, supporting transparent on-chain governance activity.",
-        "Corporate legal counterparty disclosed (World Liberty Financial Inc.), providing an identifiable entity for legal and compliance engagement.",
-        "High pre-sale and institutional participation plus active exchange trading indicate liquidity and market interest supportive of custody and secondary-market services."
+        "Solana SPL token standard enables straightforward custody, transfers and clear on\u2011chain visibility.",
+        "Fixed supply and transparent on\u2011chain issuance assist forensic reconciliation and balance monitoring.",
+        "Existing trading activity on CEXs/DEXs provides observable liquidity and price discovery signals."
       ],
       "risks": [
-        "Current real-world use is dominated by governance voting and speculative trading rather than mature protocol usage, increasing price sensitivity to sentiment and tokenomics events.",
-        "Core products (USD1 stablecoin, lending, WLFI app) are not fully live; token utility and value hinge on future protocol adoption.",
-        "Large fundraising and pre-sales with accredited and institutional buyers risk concentrated holdings and potential sell-side pressure upon unlocks.",
-        "Initial non-transferability, KYC gating and lockbox unlock mechanics, followed by governance-approved tradability, create operational complexity and regulatory scrutiny risk.",
-        "Corporate anchoring to a company (not a decentralized DAO) concentrates legal and operational responsibility, increasing single-point-of-failure and regulatory exposure."
+        "Demand is primarily speculative and meme\u2011driven, increasing susceptibility to rapid price volatility and pump\u2011and\u2011dump cycles.",
+        "No disclosed governing entity or jurisdiction creates legal and regulatory uncertainty for onboarding and custody.",
+        "Absence of utility or governance rights reduces intrinsic value and long\u2011term resilience.",
+        "High dependence on community hype and Solana ecosystem growth heightens tail\u2011risk of sudden devaluation.",
+        "Anonymous origin elevates operational and reputational risk and complicates KYC/AML investigations and incident response."
       ],
       "watchpoints": [
-        "Monitor top-holder concentration and shifts (percentage held by top-10 and top-20 addresses and known institutional wallets).",
-        "Track scheduled unlocks, on-chain transfers from lockboxes and large offload transactions to estimate supply shocks.",
-        "Monitor exchange liquidity, trading volumes, spreads, and order-book depth across venues to assess market resilience.",
-        "Reassess risk tiering and limits if protocol products launch or key adoption metrics (TVL, active users, stablecoin circulation) materially increase.",
-        "Escalate to compliance/legal if public corporate registration details change, or if regulators initiate inquiries or enforcement related to the token or company.",
-        "Monitor governance activity: proposal frequency, voter turnout, quorum attainment, and any governance decisions altering transferability or economic rights."
+        "Sustained daily trading volume and quoted liquidity on major venues \u2014 re\u2011review if volumes decline materially or liquidity evaporates.",
+        "Large on\u2011chain token transfers from top addresses or sudden concentration shifts \u2014 flag for AML and market\u2011manipulation review.",
+        "Social media virality or coordinated campaigns coinciding with price spikes \u2014 escalate to market surveillance and trading desk.",
+        "New listings or delistings by major exchanges, or regulatory/legal actions affecting WIF or similar memecoins \u2014 prompt governance re\u2011assessment.",
+        "Emergence of a formal entity, material tokenomics changes, or governance mechanism introductions \u2014 reassess legal status and suitability.",
+        "Unusual token program activity (minting, freezes, upgrades) or contract modifications \u2014 trigger operational security and custody review.",
+        "Periodic suitability reassessment for retail clients and review of position limits, margining and custody policies given speculative profile."
       ]
     },
     {
       "domain_code": "Regulatory & Legal Risk",
       "domain_name": "Regulatory & Legal Risk",
-      "band_name": "Medium",
-      "band_numeric": 3,
-      "avg_score": 7.427083333333333,
-      "has_board_escalation": true,
-      "board_escalation_count": 1,
-      "one_line": "WLFI claims governance-only utility but trades as a speculative asset, with centralised upgrade control and extensive jurisdictional restrictions; requires conservative onboarding, enhanced monitoring and heightened suitability scrutiny.",
+      "band_name": "Medium-High",
+      "band_numeric": 4,
+      "avg_score": 9.666666666666666,
+      "has_board_escalation": false,
+      "board_escalation_count": 0,
+      "one_line": "Speculative Solana meme token with anonymous founders, limited protections and unclear upgrade authority; poses material consumer\u2011harm and regulatory uncertainty, requiring heightened internal risk controls and active monitoring.",
       "strengths": [
-        "Official whitepaper includes a dedicated risks section detailing governance, centralisation, volatility, smart contract and market risks.",
-        "Official materials explicitly state WLFI is governance-only and disavow expectations of profit or dividend rights.",
-        "Evidence of some investor protections: presale investors KYC-verified and proposed vesting schedules for certain allocations.",
-        "Material secondary-market trading and exchange listings provide observable liquidity and price discovery."
+        "On\u2011chain indicators show fixed supply and apparent renounced mint authority, reducing risk of future unilateral inflation.",
+        "Liquidity lock (~1 year) from launch and launchpad\u2019s KYC/audit for the presale provide limited investor protections.",
+        "Public messaging explicitly acknowledges lack of utility and the token\u2019s speculative nature, aiding transparent consumer disclosure."
       ],
       "risks": [
-        "Public communications and media coverage emphasise fundraising, pricing and market gains, increasing retail misunderstanding and suitability risk.",
-        "On-chain and market behaviour is primarily speculative trading; functional governance utility appears secondary and still emergent.",
-        "Governance rights are highly material and can affect issuance, fees and treasury economics, producing economic impacts despite governance-only claims.",
-        "Protocol upgrades controlled by a multisig without a documented timelock suggest centralised operational risk and potential unilateral action.",
-        "Extensive jurisdictional restrictions and U.S. accredited-investor structuring materially constrain eligible retail availability and complicate onboarding.",
-        "Investor protections appear partial; unclear or late disclosures on vesting and circulating supply raise dilution and sudden-supply risks at unlocks.",
-        "High-profile political and legislative scrutiny (though no enforcement yet) elevates the risk of future regulatory attention or action.",
-        "Potential regulatory-perimeter ambiguity: material governance control over economics could attract securities or e-money characterisation scrutiny."
+        "Primarily promoted as a speculative meme asset; high volatility and retail\u2011facing promotions increase consumer\u2011harm risk.",
+        "Questionable promotional claims (e.g., alleged Sphere partnership later denied) raise misleading\u2011advertising and regulatory enforcement risk.",
+        "Anonymous founders and limited documented governance complicate accountability and incident\u2011response expectations.",
+        "Unclear on\u2011chain authority status and absence of timelocks introduce governance and operational upgrade risk.",
+        "Regulatory/perimeter classification (securities/e\u2011money) is unresolved, creating potential compliance obligations and supervisory scrutiny.",
+        "High concentration and social\u2011media driven demand increase pump\u2011and\u2011dump and market\u2011manipulation vulnerability."
       ],
       "watchpoints": [
-        "Monitor exchange trading volumes, bid-ask spreads and realised volatility to calibrate position limits and margin requirements.",
-        "Reassess the asset after any governance proposal that changes issuance, fees, treasury allocations or introduces economic entitlements.",
-        "Track multisig signer composition, on-chain admin key rotations and any introduction of timelock controls for centralisation risk signals.",
-        "Monitor scheduled token unlocks, vesting releases and changes to circulating supply that could materially impact market liquidity and price.",
-        "Watch for regulatory developments, enforcement actions, investor alerts or formal guidance from FCA, SEC, ESMA and other domestic regulators.",
-        "Monitor on-chain governance participation and functional adoption metrics (voting turnout, staking, active DeFi integrations and user activity).",
-        "Trigger re-review on material disclosure updates, marketing shifts emphasising returns, new legal opinions, or significant secondary-market concentration events."
+        "Significant intraday volume or price spikes relative to the 30\u2011day baseline, to trigger enhanced surveillance and potential exposure limits.",
+        "Rapid increases in social\u2011media mentions, coordinated posting, or paid promotion claims, especially alleging partnerships or endorsements.",
+        "On\u2011chain changes to mint/admin keys, new contract deployments, or any unexpected authority activity affecting token control.",
+        "Approaching or executed liquidity\u2011lock expiry, or any material change to locked liquidity status.",
+        "Large transfers or sell\u2011offs from top holder wallets, or rising wallet concentration metrics.",
+        "Public denials by purported partners, regulatory notices, or credible media reports alleging misleading promotions or fraud.",
+        "Exchange delistings, major market\u2011making withdrawal, custody support removals, or enforcement actions affecting tradability or client exposure."
       ]
     },
     {
       "domain_code": "AML & Sanctions Risk",
       "domain_name": "AML & Sanctions Risk",
-      "band_name": "Low",
-      "band_numeric": 2,
-      "avg_score": 3.3625,
+      "band_name": "Medium",
+      "band_numeric": 3,
+      "avg_score": 6.85,
       "has_board_escalation": false,
       "board_escalation_count": 0,
-      "one_line": "Low current AML/sanctions risk: transparent ERC\u201120 with analytics coverage and major\u2011exchange liquidity, but allegations of sales to sanctioned\u2011linked wallets and CEX\u2011centric trading raise reputational and regulatory exposure.",
+      "one_line": "WIF is a transparent Solana SPL memecoin with full analytics coverage and significant CEX liquidity, but anonymous team and off\u2011chain trading create residual AML and jurisdictional uncertainty.",
       "strengths": [
-        "Deployed as standard ERC\u201120/BEP\u201120/SPL token on public chains, inheriting transparent, traceable transaction data.",
-        "High likelihood of coverage by major blockchain analytics vendors, enabling on\u2011chain monitoring and transaction attribution.",
-        "Listings on major exchanges provide deep liquidity and potential KYC/transaction provenance via counterparties."
+        "Transparent Solana SPL token with no native privacy features, enabling on\u2011chain visibility and traceability.",
+        "Full coverage by major blockchain analytics providers, supporting transaction monitoring and investigations.",
+        "Significant liquidity and listings on regulated CEXs, facilitating reliance on counterparty controls and KYC."
       ],
       "risks": [
-        "Public allegations that token sales reached wallets linked to sanctioned actors create potential reputational and enforcement risk despite no current designation.",
-        "CEX\u2011dominant, off\u2011chain trading footprint reduces observable provenance and increases reliance on counterparties\u2019 AML/KYC controls.",
-        "Ecosystem ties with large exchanges that have prior AML/sanctions deficiencies amplify counterparty and regulatory exposure.",
-        "Absence of protocol privacy features reduces anonymisation risk now, but ad hoc bridging to private layers remains possible and unquantified.",
-        "Ongoing political and congressional scrutiny increases probability of future regulatory or enforcement attention."
+        "Majority of trading occurs on CEX orderbooks, reducing the firm\u2019s visibility into end\u2011users and potentially masking jurisdictional exposure.",
+        "Founders and core contributors are anonymous; lack of verifiable legal entity complicates attribution, contractual recourse and source\u2011of\u2011funds inquiries.",
+        "No reliable public data on geographic volume split creates uncertainty about trading from sanctioned or high\u2011risk jurisdictions, elevating residual sanctions risk.",
+        "Although currently rare, bridging to privacy\u2011focused layers or sudden adoption of privacy tools could materially increase transactional opacity."
       ],
       "watchpoints": [
-        "Immediate re\u2011review trigger if WLFI token, issuer, or associated wallets/contracts appear on OFAC/UN/EU/UK sanctions lists.",
-        "Escalate if DOJ, Treasury/OFAC, or other regulators publicly open investigations, issue warnings, or take enforcement actions naming WLFI or issuer.",
-        "Monitor major analytics vendors for new flags showing flows to sanctioned entities, DPRK/Russia/Iran typologies, or mixer/privacy\u2011pool usage.",
-        "Track sudden concentration events: large transfers to single custodial addresses, exchanges, or newly created wallets tied to high\u2011risk jurisdictions.",
-        "Watch for material changes in exchange listings, delistings, or changes in counterparty KYC/AML controls affecting WLFI liquidity corridors.",
-        "Require refreshed jurisdictional volume data or exchange disclosures if credible evidence emerges that >20% trading originates from high\u2011risk/sanctioned jurisdictions."
+        "Re\u2011review if major analytics show material (>5% 30\u2011day) flows to mixers, privacy pools, or privacy\u2011focused chains.",
+        "Continuously monitor OFAC/EU/UN/UK sanctions lists and regulator communications for any designation of the token, related contracts, or known wallets; escalate on matches.",
+        "Obtain and review jurisdictional and aggregate KYC data from major exchange counterparties quarterly or upon significant volume shifts.",
+        "Monitor exchange listing status, delistings, regulatory warnings, or enforcement cases referencing WIF or associated addresses; reassess risk posture on any adverse action.",
+        "Track on\u2011chain versus CEX volume monthly; escalate if on\u2011chain share rises materially or if large concentrated transfers emerge.",
+        "Reassess if credible attribution surfaces about core team, foundation formation, or validator concentration in high\u2011risk jurisdictions."
       ]
     },
     {
@@ -449,210 +263,242 @@
       "domain_name": "Technical & Protocol Security",
       "band_name": "Medium",
       "band_numeric": 3,
-      "avg_score": 8.564102564102564,
-      "has_board_escalation": true,
-      "board_escalation_count": 6,
-      "one_line": "Recent partial audits and a verified proxy source exist, but limited audit coverage, a young mainnet and opaque testing/upgrade practices create medium technical and protocol security risk for listing and exposure.",
+      "avg_score": 8.006410256410257,
+      "has_board_escalation": false,
+      "board_escalation_count": 0,
+      "one_line": "Moderate technical risk: multiple tier\u20112 audits with no high findings, but minimal documentation, limited audit recency and unknown re\u2011audit practices suggest cautious listing, tight limits and enhanced monitoring.",
       "strengths": [
-        "Independent third\u2011party Cyfrin audit reported for the WLFI Lockbox and a recent reserve attestation within the last 12 months.",
-        "Core ERC\u201120 proxy contract source is verified on Etherscan and built on OpenZeppelin TransparentUpgradeableProxy.",
-        "Presence of a whitepaper/'Gold Paper' and some public-facing risk disclosures improves baseline transparency compared with entirely undocumented launches."
+        "Multiple independent third\u2011party audits (HashEx, Cyberscope, Coinscope) provide independent coverage rather than no review.",
+        "Latest identified audits report no critical or high\u2011severity findings, lowering immediate high\u2011severity exploit likelihood.",
+        "Token implements Solana\u2019s standard, open\u2011source SPL token program rather than bespoke, unvetted protocol code.",
+        "Mainnet deployment is mature (>24 months), reducing early\u2011stage deployment risks associated with brand new code."
       ],
       "risks": [
-        "Audit coverage appears limited to the Lockbox component; there is no public evidence of comprehensive audits across all token contracts or cross\u2011chain components.",
-        "Underlying audit reports, vulnerability severities and remediation evidence are not publicly accessible, leaving remediation status and residual risk unknown.",
-        "Mainnet codebase is very young (<6 months), increasing operational and untested\u2011path risk versus mature protocols.",
-        "Upgradeable proxy pattern implies privileged admin/upgrade capabilities; if keys or governance are compromised this materially raises exploitation risk.",
-        "No public evidence of formal verification, quantitative test coverage or transparent CI/CD pipelines, increasing software quality uncertainty.",
-        "Unclear whether major protocol upgrades have been re\u2011audited; absence of re\u2011audit evidence elevates upgrade/upgrade\u2011rollback risk."
+        "Audit quality is Tier\u20112; firms are reputable but not top\u2011tier, increasing residual risk of missed advanced vulnerabilities.",
+        "Most recent audit is 12\u201324 months old, creating potential staleness in coverage versus current code or environment.",
+        "No public technical docs, whitepaper, or CI/CD visibility increases operational and change\u2011management uncertainty for due diligence.",
+        "No evidence of formal verification or disclosed test coverage, leaving gaps in assurance of correctness and robustness.",
+        "Unknown re\u2011audit status after upgrades and absence of a dedicated testnet mean protocol changes could go unreviewed.",
+        "Meme\u2011token nature and anonymous/community governance imply limited accountability or formal maintenance processes, raising operational risk."
       ],
       "watchpoints": [
-        "Publication of full primary audit reports and explicit remediation evidence for high/critical findings; escalate if none are produced within a defined monitoring window.",
-        "Evidence of any new audits or re\u2011audits after material contract upgrades; treat absence as a re\u2011review trigger for exposure limits.",
-        "Changes to verified on\u2011chain source or proxy admin addresses; flag and investigate immediate anomalous admin/upgrade activity.",
-        "Security advisories, exploit reports or third\u2011party vulnerability disclosures mentioning WLFI components; escalate to incident response on detection.",
-        "On\u2011chain signals: large unlocks, claims, bridge flows, sudden holder concentration or abnormal transfer volumes that could precede price or liquidity shocks.",
-        "Operational signals: publication of CI/CD/testing metrics, testnet stability reports or developer repository updates; use as inputs to periodic reassessment.",
-        "Reserve attestation publication details and scope (timing, scope, auditor identity); treat incomplete or infrequent attestations as grounds for tighter limits.",
-        "Time\u2011based trigger: if no fresh audit or attestation evidence appears within 12 months, initiate formal internal re\u2011assessment of listing status and counterparty limits."
+        "Monitor for any new audit reports or re\u2011audits; trigger internal re\u2011review if no new audit appears within 12 months.",
+        "Re\u2011review if any high\u2011severity finding is published by any auditor, or if auditors issue materially differing conclusions.",
+        "Monitor on\u2011chain indicators: large wallet transfers, rapid concentration changes, abnormal transaction patterns or sudden volume spikes.",
+        "Alert and reassess if the token contract/program ID changes, or if any on\u2011chain upgrade or migration is detected.",
+        "Track liquidity and price volatility metrics; tighten exposure limits if sudden illiquidity or extreme volatility is observed.",
+        "Require periodic internal reassessment if audit firms or their reports are later discredited or if industry vulnerability disclosures affect Solana SPL tokens."
       ]
     },
     {
       "domain_code": "Market & Liquidity Integrity",
       "domain_name": "Market & Liquidity Integrity",
-      "band_name": "Medium",
-      "band_numeric": 3,
-      "avg_score": 8.618421052631579,
-      "has_board_escalation": false,
-      "board_escalation_count": 0,
-      "one_line": "Listings on major venues and sizable day\u2011to\u2011day volume mask fragmented, volatile liquidity and limited stress\u2011history, creating execution and monitoring challenges for regulated firms.",
+      "band_name": "Medium-High",
+      "band_numeric": 4,
+      "avg_score": 9.263157894736842,
+      "has_board_escalation": true,
+      "board_escalation_count": 1,
+      "one_line": "WIF shows deep, multi\u2011venue liquidity with low typical slippage for small trades, but derivatives\u2011heavy, spiky flows and some lower\u2011quality venue volume raise elevated market\u2011integrity and exit risks.",
       "strengths": [
-        "Listed on multiple top\u2011tier centralized exchanges and available across spot and derivatives venues, providing several execution venues.",
-        "Reported market capitalisation (\u2248$4.1\u20134.3B) and daily spot volumes in the hundreds of millions suggest day\u2011to\u2011day tradability for retail and some institutional flows.",
-        "Active derivatives markets increase available liquidity and hedging channels for execution and risk management."
+        "Listed and actively traded on multiple major CEXs (Binance, OKX, KuCoin, Bybit, HTX) and Solana DEXs, enabling multi\u2011venue execution and observable order\u2011book depth.",
+        "High reported spot turnover versus market cap (~25\u201333% daily) supports two\u2011sided markets and routine retail/mid\u2011sized execution.",
+        "On\u2011chain liquidity pools and multi\u2011venue listings provide additional routing options for slicing and minimising market impact on exits.",
+        "Typical spreads are moderate (\u22480.10\u20130.50%) and benchmark slippage for low five\u2011figure trades is generally below 0.5% on primary venues."
       ],
       "risks": [
-        "Meaningful liquidity appears fragmented across venues and pairs, increasing execution complexity and the potential for venue-specific price impact.",
-        "Evidence of very large launch\u2011day volume spikes and ongoing spikiness suggests non\u2011steady, potentially non\u2011organic liquidity that can cause rapid price moves.",
-        "Independent snapshots and reports indicate wide effective bid\u2011ask spreads and uncertain slippage, raising execution cost risk for larger trades.",
-        "Derivatives\u2011dominant turnover can amplify short\u2011term volatility and decouple spot pricing, increasing hedging and settlement risk.",
-        "Behaviour under market\u2011wide stress is unknown; liquidity collapse or rapid withdrawal remains a plausible downside risk.",
-        "Wash\u2011trade and fake\u2011volume risk remains unquantified by current public sources, undermining confidence in reported liquidity metrics."
+        "Derivatives\u2011dominant trading (perpetuals materially exceeding spot) can amplify volatility and create funding\u2011driven price distortions between venues.",
+        "Highly spiky, campaign\u2011driven volume patterns increase the chance of sudden liquidity deterioration and elevated slippage during stress.",
+        "Reported volume on lower\u2011transparency exchanges raises wash\u2011trading and fake\u2011volume concerns that may overstate usable liquidity.",
+        "Liquidity concentration in a small set of pairs/venues increases counterparty and access risk if those platforms reduce depth or listings.",
+        "Concentration of large holders and meme\u2011token volatility heighten tail\u2011risk for abrupt order\u2011book gaps and execution losses on large trades."
       ],
       "watchpoints": [
-        "Track realised slippage for a benchmark trade across primary venues daily; trigger review if median slippage >0.5% or any venue shows >2%.",
-        "Monitor bid\u2011ask spreads and cross\u2011venue price dispersion; escalate if spreads persistently exceed 0.5% or cross\u2011venue differentials exceed 2%.",
-        "Monitor volume concentration by exchange and pair weekly; trigger enhanced due diligence if a single venue accounts for >50% of reported volume.",
-        "Monitor derivatives\u2011to\u2011spot volume ratio weekly; re\u2011review if derivatives share exceeds 60% or rises sharply alongside price dislocations.",
-        "Watch on\u2011chain unlocked supply, disclosed vesting cliffs and large transfers to exchanges; re\u2011assess liquidity when material supply is unlocked or moved.",
-        "Subscribe to wash\u2011trade analytics and aggregator flags; re\u2011review if credible wash\u2011trading indicators or major data provider warnings emerge."
+        "Monitor daily spot and derivatives volumes and their ratio; re\u2011review exposure if derivatives persistently exceed spot by a large multiple (for example, >2x) or increase sharply.",
+        "Track volume/market\u2011cap (turnover); re\u2011review risk tiering if daily turnover moves materially above current ~25\u201333% or becomes highly erratic.",
+        "Continuously measure realised slippage for the firm's benchmark execution slices; escalate if median slippage for benchmark trades exceeds 0.5% on primary venues.",
+        "Track top\u2011venue share of reported volume; re\u2011review concentration limits if the majority of liquidity concentrates on fewer than three venues or shifts to lower\u2011reputation exchanges.",
+        "Subscribe to credible market\u2011integrity analytics for wash\u2011trading flags; escalate if a significant share of reported volume is attributed to low\u2011transparency venues.",
+        "Monitor order\u2011book depth across primary venues relative to firm benchmark trades and re\u2011assess client exposure limits following any observed depth deterioration.",
+        "Monitor on\u2011chain DEX TVL and pool depths on Solana; re\u2011review execution strategies if TVL or pool depth falls sharply.",
+        "Require prompt listing\u2011committee re\u2011approval after major stress events, venue delistings, or sustained deterioration across monitored metrics."
       ]
     },
     {
       "domain_code": "Strategic, Reputational & ESG",
       "domain_name": "Strategic, Reputational & ESG",
-      "band_name": "Medium-High",
-      "band_numeric": 4,
-      "avg_score": 10.0,
+      "band_name": "Medium",
+      "band_numeric": 3,
+      "avg_score": 7.368421052631579,
       "has_board_escalation": true,
-      "board_escalation_count": 3,
-      "one_line": "Significant reputational and governance concerns with high speculative reliance and concentrated insider holdings, despite a plausible DeFi proposition and low\u2011carbon PoS issuance; requires elevated monitoring and restrictive controls before onboarding.",
+      "board_escalation_count": 1,
+      "one_line": "Meme-token with high speculative dependence, concentrated holders and reputational risks; low environmental impact and strong community/listing support \u2014 requires enhanced monitoring, limits and clear client disclosures.",
       "strengths": [
-        "Low environmental footprint: WLFI is issued on PoS chains (Ethereum, Solana, BNB), materially less energy\u2011intensive than PoW tokens.",
-        "Public disclosures present a coherent governance\u2011token proposition tied to a planned USD1 stablecoin and DeFi stack, aiding initial economic assessment.",
-        "Multi\u2011chain issuance and large prior fundraising indicate available secondary\u2011market liquidity and institutional interest that can support custody and market\u2011making if risk controls apply."
+        "Low environmental impact: token issued on Solana (PoS/PoH), materially less energy\u2011intensive than PoW chains.",
+        "Simple, transparent tokenomics: fixed supply with mint authority revoked, reducing ongoing seigniorage risk.",
+        "Established market presence and liquidity evidence through major exchange listings and active trading volumes.",
+        "Strong community engagement and meme-driven demand that has sustained market interest and visibility."
       ],
       "risks": [
-        "Current value drivers appear dominated by large token sales and market speculation while core products remain early\u2011stage, heightening valuation and market risk.",
-        "Very large, concentrated insider and affiliated allocations (material single\u2011party control estimates) create significant concentration and extractive economics risk.",
-        "Elevated reputational risk from high\u2011profile political ties, major media scrutiny and alleged conflicts of interest, which may affect counterparties, customers and regulators.",
-        "Reported governance powers to blacklist or freeze wallets introduce centralisation, operational and legal risk for custody and compliance functions.",
-        "Public user complaints about transfer failures, token legitimacy confusion and opaque fees increase operational burden and potential customer\u2011loss exposure.",
-        "High fully diluted valuations and sizeable presales increase tail risk if market sentiment or regulatory posture shifts materially."
+        "Value driven primarily by speculation and narrative rather than product usage, increasing price volatility and tail\u2011risk for investors.",
+        "High concentration risk: initial single\u2011wallet mint and top\u2011holder concentration can enable market manipulation or large price moves.",
+        "Anonymous founders and opaque governance create attribution and accountability concerns for compliance and reputational exposure.",
+        "Documented governance/operational controversy (Vegas Sphere fundraising delays and opaque multisig communications) elevates trust and reputational risk.",
+        "Social\u2011media compromise and prolific impersonation/phishing incidents have already caused investor confusion and losses.",
+        "Copycat tokens and ticker confusion increase operational risk of mistaken trades and customer complaints.",
+        "Although no enforcement actions identified, anonymity and prior controversies increase potential for regulatory scrutiny and operational constraints."
       ],
       "watchpoints": [
-        "Monitor on\u2011chain concentration: track identified insider/affiliate holdings and cumulative control; trigger senior re\u2011review if control exceeds 20% or if large consolidations occur.",
-        "Track secondary\u2011market volatility, volumes and spreads; escalate if extreme volatility, persistent volume collapse, or sudden delistings indicate market dislocation.",
-        "Flag any governance proposals or executed votes that enable wallet freezes, blacklist powers, or large allocation changes; escalate to legal and senior compliance on impact.",
-        "Monitor mainstream and specialist media for investigative developments and any regulator or law\u2011enforcement mentions; escalate immediately on reports of formal inquiries or enforcement.",
-        "Measure customer complaint and support ticket trends related to deposits, transfers and token authenticity; tighten onboarding or limits if complaints rise materially.",
-        "Track stablecoin development and issuance activity on associated platforms, and monitor flows between WLFI and the USD1 stablecoin as a potential contagion vector."
+        "Monitor sustained 24h and 30\u2011day price volatility and volume spikes; trigger re\u2011review if extreme or persistent.",
+        "Track top\u201110 holder concentration and large on\u2011chain transfers to exchanges or unknown wallets; escalate if significant shifts occur.",
+        "Monitor multisig wallet activity and public refund outcomes related to the Sphere fundraising for reputational impact.",
+        "Flag social\u2011media account compromises, phishing site incidents, and impersonation reports; escalate customer guidance and monitoring when incidents increase.",
+        "Watch for new token contracts, changes to mint/control rights, or replicated tokens that alter custody or onboarding risks.",
+        "Monitor regulatory, enforcement and exchange\u2011listing developments; escalate to board on any formal enforcement or major delisting actions.",
+        "Track customer complaints, instances of mistaken trades and phishing losses; review suitability, limits and internal controls if trends worsen."
       ]
     }
   ],
   "risk_tags": {
     "base": [
-      "admin_key_centralisation_risk",
-      "complex_protocol_design_risk"
+      "defi_liquidation_mechanism_risk",
+      "governance_documentation_gaps_risk",
+      "insider_unlocks_risk",
+      "liquidity_concentration_risk",
+      "low_liquidity_risk",
+      "oracle_dependency_risk",
+      "poor_disclosure_quality_risk",
+      "sanctions_exposure_risk",
+      "sanctions_screening_controls_risk",
+      "wash_trading_risk"
     ],
     "refined": [
       {
-        "id": "admin_key_centralisation_risk",
+        "id": "memecoin_hype_dependency_risk",
         "include": true,
-        "reason": "WLFI is controlled via corporate counterparties and privileged contract controls (e.g., owner/guardian pause and reported blacklist/freeze actions), indicating centralized operational control rather than autonomous DAO control."
+        "reason": "DDQ narratives repeatedly describe WIF as a meme coin whose value is driven primarily by community sentiment, meme virality, and speculative trading (e.g., Sphere-style social campaigns), rather than fundamentals."
       },
       {
-        "id": "complex_protocol_design_risk",
+        "id": "memecoin_no_utility_risk",
         "include": true,
-        "reason": "WLFI sits within a broader World Liberty Financial DeFi ecosystem (USD1 stablecoin, bridge, planned lending/app) with evolving mechanics (lockbox unlocks, KYC gating, governance-approved changes), increasing design and operational complexity versus a simple token."
-      },
-      {
-        "id": "upgradeability_risk",
-        "include": true,
-        "reason": "The WLFI token contract is a TransparentUpgradeableProxy with upgrades controlled via a ProxyAdmin pattern and no clear on-chain timelock/TimelockController, creating material contract-change risk."
-      },
-      {
-        "id": "smart_contract_risk",
-        "include": true,
-        "reason": "Verified implementation includes ERC20PausableUpgradeable with ownerPause()/guardianPause() and other privileged controls; combined with upgradeability, this elevates risk of unexpected behavior changes or restrictive actions impacting holders."
-      },
-      {
-        "id": "gov_token_governance_concentration_risk",
-        "include": true,
-        "reason": "Governance is described as centralized (Trump-family-controlled holding company/management influence) and voting is conducted off-chain via Snapshot (non-binding sentiment signaling), implying concentrated decision-making power and limited on-chain checks."
-      },
-      {
-        "id": "treasury_concentration_risk",
-        "include": true,
-        "reason": "A large WLFI treasury (reported ~$1.5B) and treasury management arrangements (ALT5 Sigma with leadership tied to WLFI executives) plus controversies around treasury movements suggest concentrated treasury control and related governance/market risks."
-      },
-      {
-        "id": "insider_unlocks_risk",
-        "include": true,
-        "reason": "Sources reference initial non-transferability, KYC gating, and lockbox-based unlocks with governance-approved changes, indicating material supply/unlock mechanics that can create insider/early-holder unlock and distribution risk."
+        "reason": "Multiple sources in the DDQ state WIF has explicitly no inherent utility/governance/fee rights and is 'literally just a dog wif a hat', with usage dominated by trading and community culture."
       },
       {
         "id": "poor_disclosure_quality_risk",
         "include": true,
-        "reason": "DDQ notes gaps such as missing detailed corporate registration info and no clear formal treasury disbursement rules or ongoing public treasury reporting, creating decision-relevant transparency risk."
+        "reason": "DDQ indicates limited/absent formal documentation (e.g., documentation listed as N/A; no roadmap; minimal verifiable project disclosures), consistent with weaker disclosure quality."
+      },
+      {
+        "id": "governance_documentation_gaps_risk",
+        "include": true,
+        "reason": "Evidence states no formal governance structure, no voting rights, and no published governance documents/constitution or DAO framework."
+      },
+      {
+        "id": "treasury_concentration_risk",
+        "include": true,
+        "reason": "DDQ notes a key community/marketing treasury (Sphere campaign) controlled by a 3-signer multisig with named signers and no broader DAO-style controls or published disbursement policies."
+      },
+      {
+        "id": "low_liquidity_risk",
+        "include": true,
+        "reason": "DDQ base tag aligns with the asset being primarily speculative and exchange/DEX-trading driven; such meme tokens can exhibit episodic liquidity and rapid liquidity withdrawals versus large-cap assets."
+      },
+      {
+        "id": "liquidity_concentration_risk",
+        "include": true,
+        "reason": "Given WIF\u2019s meme-driven trading profile and typical reliance on a limited set of venues/pools for price discovery, the base DDQ tag indicates liquidity may be concentrated enough to be decision-relevant."
       }
     ]
   },
   "asset_specific_risks": [
     {
-      "category": "Cryptoasset risks (baseline)",
+      "category": "Governance & control risks",
       "items": [
         {
-          "tag_id": "complex_protocol_design_risk",
-          "reason": "WLFI sits within a broader World Liberty Financial DeFi ecosystem (USD1 stablecoin, bridge, planned lending/app) with evolving mechanics (lockbox unlocks, KYC gating, governance-approved changes), increasing design and operational complexity versus a simple token.",
-          "text": "Cryptoassets are complex: It may not always be clear how a cryptoasset works or what factors influence its value. Take time to research and understand what you\u2019re investing in. If something sounds too good to be true, it probably is."
-        },
+          "tag_id": "governance_documentation_gaps_risk",
+          "reason": "Evidence states no formal governance structure, no voting rights, and no published governance documents/constitution or DAO framework.",
+          "text": "Governance documentation gaps: If governance processes, roles or controls are not clearly documented, it is harder to assess accountability, change-management risk and effective decentralisation.",
+          "evidence": [
+            {
+              "sheet_name": "Token Fundamentals & Governance",
+              "question_id": "D3",
+              "raw_response": "No",
+              "confidence": "High",
+              "source_citations": [
+                "https://www.mexc.co/tr-CT/price/WIF/tokenomics",
+                "https://tokenradar.ai/tokens/dogwifhat/tokenomics",
+                "https://www.mexc.fm/price/WIF/tokenomics"
+              ],
+              "note": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Market integrity & liquidity risks",
+      "items": [
+        {
+          "tag_id": "low_liquidity_risk",
+          "reason": "DDQ base tag aligns with the asset being primarily speculative and exchange/DEX-trading driven; such meme tokens can exhibit episodic liquidity and rapid liquidity withdrawals versus large-cap assets.",
+          "text": "Selling your investment: You may not always be able to sell your cryptoassets when you want. Market conditions or operational issues can cause delays, meaning you might not be able to access your money at the time you need it.",
+          "evidence": [
+            {
+              "sheet_name": "Market & Liquidity Integrity",
+              "question_id": "A2.2",
+              "raw_response": "Feasible but with significant care",
+              "confidence": "High",
+              "source_citations": [
+                "https://www.coingecko.com/en/coins/dogwifhat/usd",
+                "https://solanacharts.com/solana/EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm/",
+                "https://solanacompass.com/projects/dogwifhat"
+              ],
+              "note": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Disclosure & transparency risks",
+      "items": [
         {
           "tag_id": "poor_disclosure_quality_risk",
-          "reason": "DDQ notes gaps such as missing detailed corporate registration info and no clear formal treasury disbursement rules or ongoing public treasury reporting, creating decision-relevant transparency risk.",
-          "text": "Lack of protections: Cryptoassets are largely unregulated. This means you will not be protected by the Financial Services Compensation Scheme (FSCS) or the Financial Ombudsman Service (FOS) if something goes wrong with your investment."
+          "reason": "DDQ indicates limited/absent formal documentation (e.g., documentation listed as N/A; no roadmap; minimal verifiable project disclosures), consistent with weaker disclosure quality.",
+          "text": "Lack of protections: Cryptoassets are typically not covered by the protections that apply to regulated investments. If something goes wrong, you may have limited recourse.",
+          "evidence": [
+            {
+              "sheet_name": "Technical & Protocol Security",
+              "question_id": "A4.2",
+              "raw_response": "Unknown",
+              "confidence": "Medium",
+              "source_citations": [
+                "https://solscan.io/token/EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+                "https://www.coingecko.com/en/coins/dogwifhat"
+              ],
+              "note": null
+            }
+          ]
         }
       ]
     },
     {
-      "category": "DeFi risks",
+      "category": "Additional risks",
       "items": [
         {
-          "tag_id": "smart_contract_risk",
-          "reason": "Verified implementation includes ERC20PausableUpgradeable with ownerPause()/guardianPause() and other privileged controls; combined with upgradeability, this elevates risk of unexpected behavior changes or restrictive actions impacting holders.",
-          "text": "Smart contract risk: DeFi relies on smart contracts. Even small coding errors or bugs can lead to exploits, potentially resulting in significant financial loss."
-        }
-      ]
-    },
-    {
-      "category": "Memecoin risks",
-      "items": [
-        {
-          "tag_id": "gov_token_governance_concentration_risk",
-          "reason": "Governance is described as centralized (Trump-family-controlled holding company/management influence) and voting is conducted off-chain via Snapshot (non-binding sentiment signaling), implying concentrated decision-making power and limited on-chain checks.",
-          "text": "Governance risks: If token holders are given voting power, decisions may be influenced by users with short-term interests or low experience, increasing risk to the protocol and token value."
-        }
-      ]
-    },
-    {
-      "category": "Governance & utility token risks",
-      "items": [
-        {
-          "tag_id": "treasury_concentration_risk",
-          "reason": "A large WLFI treasury (reported ~$1.5B) and treasury management arrangements (ALT5 Sigma with leadership tied to WLFI executives) plus controversies around treasury movements suggest concentrated treasury control and related governance/market risks.",
-          "text": "Treasury concentration risk: Control over large pools of tokens or reserves may sit with a small group (such as a foundation or core team). Decisions about how these funds are used can materially affect the token\u2019s price, liquidity and perceived fairness."
+          "tag_id": "memecoin_no_utility_risk",
+          "reason": "Multiple sources in the DDQ state WIF has explicitly no inherent utility/governance/fee rights and is 'literally just a dog wif a hat', with usage dominated by trading and community culture.",
+          "text": "Limited utility risk: Tokens that rely primarily on narrative, attention, or community momentum can face sharp drawdowns when sentiment changes.",
+          "evidence": []
         }
       ]
     }
   ],
   "listing_requirements": [
     {
-      "id": "enhanced_structural_monitoring",
-      "title": "Treat this asset as a complex protocol in monitoring",
-      "severity": "Recommended",
-      "text": "Classify this asset in your higher-complexity protocol tier and ensure it is included in existing monitoring for major upgrades, security incidents and governance changes, with clear internal triggers for re-review if a serious incident occurs."
-    },
-    {
       "id": "treasury_concentration_watch",
       "title": "Watch treasury and reserve activity",
       "severity": "Recommended",
       "text": "Track public disclosures and significant on-chain movements relating to the project\u2019s treasury or reserves, and treat adverse developments (for example large unexplained sales or governance controversy) as triggers for risk re-review."
-    },
-    {
-      "id": "governance_and_admin_controls",
-      "title": "Document admin-key and governance controls",
-      "severity": "Recommended",
-      "text": "Maintain a documented internal view of admin-key holders, upgrade processes and governance controls for this asset, and ensure client disclosures explain that a small group can materially influence or interrupt token behaviour."
     },
     {
       "id": "speculative_profile_retail_controls",
@@ -681,49 +527,73 @@
   ],
   "token_fact_sheet": {
     "asset": {
-      "name": "World Liberty Financial",
-      "ticker": "WLFI",
-      "token_type": "governance_utility",
-      "description_short": null,
-      "primary_chain": "ethereum",
+      "name": "dogwifhat",
+      "ticker": "WIF",
+      "token_type": "memecoin",
+      "description": "Literally a dog wif a hat, dogwifhat (WIF) is a meme coin that's part of the ever-growing ecosystem of digital currencies on the Solana blockchain. This token brings a lighthearted twist to cryptocurrency, featuring a playful dog with a hat as its mascot, symbolising a more whimsical approach to the often serious domain of digital finance.",
+      "description_short": "Literally a dog wif a hat, dogwifhat (WIF) is a meme coin that's part of the ever-growing ecosystem of digital currencies on the Solana blockchain. This token brings a lighthearted twist to cryptocurrency, featuring a playful dog with a hat as its mascot, symbolising a more whimsical approach to the often serious domain of digital finance.",
+      "primary_chain": "solana",
       "chains": [
-        "ethereum",
         "solana",
-        "binance-smart-chain"
+        "unichain"
       ],
-      "website": "https://www.worldlibertyfinancial.com/",
+      "website": "https://dogwifcoin.org",
       "whitepaper": "",
-      "logo_url": "https://coin-images.coingecko.com/coins/images/50767/large/wlfi.png?1756438915",
+      "website_host": "dogwifcoin.org",
+      "whitepaper_host": null,
+      "headline_stats": [
+        {
+          "label": "Rank",
+          "value": "#192"
+        },
+        {
+          "label": "Market cap",
+          "value": "$337,137,280"
+        },
+        {
+          "label": "24h volume",
+          "value": "$107,208,213"
+        },
+        {
+          "label": "Circ. supply",
+          "value": "998,926,392"
+        },
+        {
+          "label": "Max supply",
+          "value": "998,926,392"
+        }
+      ],
+      "logo_url": "https://coin-images.coingecko.com/coins/images/33566/large/dogwifhat.jpg?1702499428",
       "logo_source": "coingecko"
     },
     "classification": {
       "report_scope": "Listing risk snapshot",
       "overall_band": {
-        "numeric": 3,
-        "name": "Medium"
+        "numeric": 4,
+        "name": "Medium-High"
       },
       "posture": "heightened",
       "is_speculative_profile": true,
-      "has_hard_control_risks": true,
-      "board_escalations_count": 11
+      "has_hard_control_risks": false,
+      "board_escalations_count": 4
     },
     "key_indicators": [
       {
         "id": "total_escalations",
-        "label": "Board-level escalation triggers",
-        "value": 11,
+        "label": "Listing committee escalation triggers",
+        "value": 4,
         "format": "number"
       },
       {
         "id": "top_risk_tags",
         "label": "Top risk drivers",
         "value": [
-          "admin_key_centralisation_risk",
-          "complex_protocol_design_risk",
-          "upgradeability_risk",
-          "smart_contract_risk",
-          "gov_token_governance_concentration_risk",
-          "treasury_concentration_risk"
+          "memecoin_hype_dependency_risk",
+          "memecoin_no_utility_risk",
+          "poor_disclosure_quality_risk",
+          "governance_documentation_gaps_risk",
+          "treasury_concentration_risk",
+          "low_liquidity_risk"
         ],
         "format": "list"
       }
@@ -731,60 +601,60 @@
     "risk_highlights": {
       "top_risk_tags": [
         {
-          "id": "admin_key_centralisation_risk",
-          "label": "Admin keys / privileged access",
-          "reason": "WLFI is controlled via corporate counterparties and privileged contract controls (e.g., owner/guardian pause and reported blacklist/freeze actions), indicating centralized operational control rather than autonomous DAO control."
+          "id": "memecoin_hype_dependency_risk",
+          "label": "memecoin hype dependency risk",
+          "reason": "DDQ narratives repeatedly describe WIF as a meme coin whose value is driven primarily by community sentiment, meme virality, and speculative trading (e.g., Sphere-style social campaigns), rather than fundamentals."
         },
         {
-          "id": "complex_protocol_design_risk",
-          "label": "complex protocol design risk",
-          "reason": "WLFI sits within a broader World Liberty Financial DeFi ecosystem (USD1 stablecoin, bridge, planned lending/app) with evolving mechanics (lockbox unlocks, KYC gating, governance-approved changes), increasing design and operational complexity versus a simple token."
+          "id": "memecoin_no_utility_risk",
+          "label": "memecoin no utility risk",
+          "reason": "Multiple sources in the DDQ state WIF has explicitly no inherent utility/governance/fee rights and is 'literally just a dog wif a hat', with usage dominated by trading and community culture."
         },
         {
-          "id": "upgradeability_risk",
-          "label": "Upgradability / change control",
-          "reason": "The WLFI token contract is a TransparentUpgradeableProxy with upgrades controlled via a ProxyAdmin pattern and no clear on-chain timelock/TimelockController, creating material contract-change risk."
+          "id": "poor_disclosure_quality_risk",
+          "label": "Disclosure quality concerns",
+          "reason": "DDQ indicates limited/absent formal documentation (e.g., documentation listed as N/A; no roadmap; minimal verifiable project disclosures), consistent with weaker disclosure quality."
         },
         {
-          "id": "smart_contract_risk",
-          "label": "Smart contract dependency",
-          "reason": "Verified implementation includes ERC20PausableUpgradeable with ownerPause()/guardianPause() and other privileged controls; combined with upgradeability, this elevates risk of unexpected behavior changes or restrictive actions impacting holders."
-        },
-        {
-          "id": "gov_token_governance_concentration_risk",
-          "label": "gov token governance concentration risk",
-          "reason": "Governance is described as centralized (Trump-family-controlled holding company/management influence) and voting is conducted off-chain via Snapshot (non-binding sentiment signaling), implying concentrated decision-making power and limited on-chain checks."
+          "id": "governance_documentation_gaps_risk",
+          "label": "governance documentation gaps risk",
+          "reason": "Evidence states no formal governance structure, no voting rights, and no published governance documents/constitution or DAO framework."
         },
         {
           "id": "treasury_concentration_risk",
           "label": "Treasury / reserve concentration",
-          "reason": "A large WLFI treasury (reported ~$1.5B) and treasury management arrangements (ALT5 Sigma with leadership tied to WLFI executives) plus controversies around treasury movements suggest concentrated treasury control and related governance/market risks."
+          "reason": "DDQ notes a key community/marketing treasury (Sphere campaign) controlled by a 3-signer multisig with named signers and no broader DAO-style controls or published disbursement policies."
+        },
+        {
+          "id": "low_liquidity_risk",
+          "label": "low liquidity risk",
+          "reason": "DDQ base tag aligns with the asset being primarily speculative and exchange/DEX-trading driven; such meme tokens can exhibit episodic liquidity and rapid liquidity withdrawals versus large-cap assets."
         }
       ],
       "top_domains": [
         {
-          "domain": "Strategic, Reputational & ESG",
+          "domain": "Token Fundamentals & Governance",
           "band": {
             "numeric": 4,
             "name": "Medium-High"
           },
-          "escalations": 3
+          "escalations": 2
         },
         {
-          "domain": "Technical & Protocol Security",
+          "domain": "Market & Liquidity Integrity",
           "band": {
-            "numeric": 3,
-            "name": "Medium"
+            "numeric": 4,
+            "name": "Medium-High"
           },
-          "escalations": 6
+          "escalations": 1
         },
         {
           "domain": "Regulatory & Legal Risk",
           "band": {
-            "numeric": 3,
-            "name": "Medium"
+            "numeric": 4,
+            "name": "Medium-High"
           },
-          "escalations": 1
+          "escalations": 0
         }
       ]
     },
@@ -794,40 +664,30 @@
         {
           "id": "admin_key_centralisation_risk",
           "label": "Admin keys / privileged access",
-          "present": true
+          "present": false
         },
         {
           "id": "upgradeability_risk",
           "label": "Upgradability / change control",
-          "present": true
+          "present": false
         },
         {
           "id": "smart_contract_risk",
           "label": "Smart contract dependency",
-          "present": true
+          "present": false
         },
         {
           "id": "gov_token_governance_concentration_risk",
           "label": "gov token governance concentration risk",
-          "present": true
+          "present": false
         }
       ]
     },
     "listing_requirements_summary": [
       {
-        "id": "enhanced_structural_monitoring",
-        "severity": "Recommended",
-        "title": "Treat this asset as a complex protocol in monitoring"
-      },
-      {
         "id": "treasury_concentration_watch",
         "severity": "Recommended",
         "title": "Watch treasury and reserve activity"
-      },
-      {
-        "id": "governance_and_admin_controls",
-        "severity": "Recommended",
-        "title": "Document admin-key and governance controls"
       },
       {
         "id": "speculative_profile_retail_controls",
@@ -859,33 +719,30 @@
       "provider": "coingecko",
       "enabled": true,
       "resolved": {
-        "coin_id": "world-liberty-financial",
+        "coin_id": "dogwifcoin",
         "note": "exact name+symbol match"
       },
-      "fetched_at_utc": "2025-12-19T17:33:52+00:00",
-      "name": "World Liberty Financial",
-      "symbol": "wlfi",
+      "fetched_at_utc": "2025-12-21T22:41:57+00:00",
+      "name": "dogwifhat",
+      "symbol": "wif",
       "categories": [
-        "BNB Chain Ecosystem",
         "Solana Ecosystem",
-        "Ethereum Ecosystem",
-        "Stablecoin Issuer",
-        "Made in USA",
-        "Trump-Affiliated"
+        "Meme",
+        "Dog-Themed",
+        "Solana Meme",
+        "GMCI Meme Index",
+        "GMCI Index",
+        "Unichain Ecosystem"
       ],
-      "description_en": null,
-      "logo_url": "https://coin-images.coingecko.com/coins/images/50767/large/wlfi.png?1756438915",
+      "description_en": "Literally a dog wif a hat, dogwifhat (WIF) is a meme coin that's part of the ever-growing ecosystem of digital currencies on the Solana blockchain. This token brings a lighthearted twist to cryptocurrency, featuring a playful dog with a hat as its mascot, symbolising a more whimsical approach to the often serious domain of digital finance.",
+      "logo_url": "https://coin-images.coingecko.com/coins/images/33566/large/dogwifhat.jpg?1702499428",
       "urls": {
-        "homepage": "https://www.worldlibertyfinancial.com/",
+        "homepage": "https://dogwifcoin.org",
         "whitepaper": "",
         "blockchain_site": [
-          "https://etherscan.io/token/0xdA5e1988097297dCdc1f90D4dFE7909e847CBeF6",
-          "https://intel.arkm.com/explorer/token/world-liberty-financial ",
-          "https://solscan.io/token/WLFinEv6ypjkczcS83FZqFpgFZYwQXutRbxGe7oC16g",
-          "https://bscscan.com/token/0x47474747477b199288bf72a1d702f7fe0fb1deea",
-          "https://ethplorer.io/address/0xda5e1988097297dcdc1f90d4dfe7909e847cbef6",
-          "https://binplorer.com/address/0x47474747477b199288bf72a1d702f7fe0fb1deea",
-          "https://intel.arkm.com/explorer/token/world-liberty-financial"
+          "https://solscan.io/token/EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+          "https://intel.arkm.com/explorer/token/dogwifcoin",
+          "https://uniscan.xyz/token/0x97Fadb3D000b953360FD011e173F12cDDB5d70Fa"
         ],
         "repos": {
           "github": [],
@@ -893,18 +750,17 @@
         }
       },
       "platforms": {
-        "ethereum": "0xda5e1988097297dcdc1f90d4dfe7909e847cbef6",
-        "solana": "WLFinEv6ypjkczcS83FZqFpgFZYwQXutRbxGe7oC16g",
-        "binance-smart-chain": "0x47474747477b199288bf72a1d702f7fe0fb1deea"
+        "solana": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+        "unichain": "0x97fadb3d000b953360fd011e173f12cddb5d70fa"
       },
       "market": {
-        "market_cap_rank": 41,
-        "market_cap_usd": 3611767920,
-        "volume_24h_usd": 137134587,
-        "circulating_supply": 27243802538.151154,
-        "total_supply": 100000000000.0,
-        "max_supply": 100000000000.0,
-        "last_updated": "2025-12-19T17:33:44.668Z"
+        "market_cap_rank": 192,
+        "market_cap_usd": 337137280,
+        "volume_24h_usd": 107208213,
+        "circulating_supply": 998926392.0,
+        "total_supply": 998926392.0,
+        "max_supply": 998926392.0,
+        "last_updated": "2025-12-21T22:41:56.611Z"
       }
     },
     "sources": {
@@ -918,70 +774,151 @@
       ]
     }
   },
+  "issuer_profile": {
+    "status": "partial",
+    "retrieved_at_utc": "2025-12-21 00:00 UTC",
+    "issuer": {
+      "legal_name": "Unknown",
+      "entity_type": "Unknown",
+      "jurisdiction": "Unknown",
+      "registration_number": "Unknown",
+      "lei": "Unknown",
+      "registered_address": "Unknown",
+      "status": "Unknown",
+      "website": "https://dogwifcoin.org",
+      "confidence": "low",
+      "evidence": [
+        {
+          "label": "Poloniex listing (project information shows website but no legal entity)",
+          "url": "https://support.poloniex.com/hc/en-us/articles/20491375419031-New-Listing-Dogwifhat-WIF"
+        },
+        {
+          "label": "News reporting that the WIF / Dogwifhat team 'is not a corporate entity' (project statement quoted by multiple outlets)",
+          "url": "https://decrypt.co/303887/solana-meme-coin-dogwifhat-no-deal-sphere"
+        },
+        {
+          "label": "Domain / site reputation report noting privacy-protected registration and limited ownership data for dogwifcoin.org",
+          "url": "https://gridinsoft.com/online-virus-scanner/url/dogwifcoin-org"
+        }
+      ]
+    },
+    "key_people": [
+      {
+        "name": "Ansem (aka Zion Thomas / @blknoiz06)",
+        "role": "Influencer / fundraiser promoter / listed fundraiser controller (public-facing organiser)",
+        "affiliation": "Dogwifhat (WIF) fundraiser organisers / community",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "label": "Decrypt: coverage naming 'Ansem' (Zion Thomas) as a prominent fundraiser organiser and promoter",
+            "url": "https://decrypt.co/236105/dogwifhat-solana-las-vegas-sphere-what-happened"
+          },
+          {
+            "label": "Coinlive: article stating a group led by Zion Thomas raised funds for the Sphere campaign",
+            "url": "https://www.coinlive.com/news/crypto-influencers-raised-650k-to-put-dogwifhat-on-las-vegas"
+          }
+        ]
+      },
+      {
+        "name": "Mihir (handle: __mihir)",
+        "role": "Fundraiser organiser / multisig controller (reported coordinator and Telegram spokesperson)",
+        "affiliation": "Dogwifhat (WIF) fundraiser organisers / community",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "label": "Decrypt: quotes and reporting identifying 'Mihir' as one of the fundraiser organisers and controller of the multisig wallet",
+            "url": "https://decrypt.co/236105/dogwifhat-solana-las-vegas-sphere-what-happened"
+          },
+          {
+            "label": "Coinlive: reporting referencing Mihir as a controller of the fund and organiser",
+            "url": "https://www.coinlive.com/news/crypto-influencers-raised-650k-to-put-dogwifhat-on-las-vegas"
+          }
+        ]
+      },
+      {
+        "name": "Edward (alias: GamesMaster / GamesMasterFlex / GamesMaster.wif)",
+        "role": "Fundraiser controller / influencer (listed controller on fundraiser reporting)",
+        "affiliation": "Dogwifhat (WIF) fundraiser organisers / community",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "label": "Protos: reporting listing Edward among fund controllers and discussing his public posts about the fundraiser",
+            "url": "https://protos.com/wif-fundraiser-says-vegas-sphere-refunds-will-start-on-april-fools/"
+          },
+          {
+            "label": "Coinlive: mentions Edward as one of the five fund managers/controllers",
+            "url": "https://www.coinlive.com/news/crypto-influencers-raised-650k-to-put-dogwifhat-on-las-vegas"
+          }
+        ]
+      },
+      {
+        "name": "Quasi (handle: @motocap_)",
+        "role": "Fundraiser controller / influencer (listed controller on fundraiser reporting)",
+        "affiliation": "Dogwifhat (WIF) fundraiser organisers / community",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "label": "Coinlive: article referencing 'Quasi' as one of the fundraising group/controllers",
+            "url": "https://www.coinlive.com/news/crypto-influencers-raised-650k-to-put-dogwifhat-on-las-vegas"
+          }
+        ]
+      }
+    ],
+    "notes": "I could not identify a registered legal issuer for Dogwifhat / dogwifcoin.org in public corporate registries. Multiple reputable news sources and the project's public statements indicate the WIF team operates as volunteer/pseudonymous organisers rather than a formal corporate entity; fundraiser controllers have been reported as named influencers (Ansem/Zion Thomas, Mihir, Edward, Quasi) and funds sit in a multisig wallet. Because no verified company registration, registration number, or legal address was found on official project pages or filings, all issuer fields are set to 'Unknown' and issuer.status='Unknown'. Evidence links are to news coverage and the exchange listing that reference the project and organisers."
+  },
   "executive_summary": {
-    "headline_decision_view": "Medium risk, heightened posture \u2014 proceed only with strict controls, committee sign-off and elevated monitoring.",
+    "headline_decision_view": "Medium\u2011High risk memecoin on Solana. Permit listing only with formal committee sign\u2011off, prominent client disclosures, conservative trading limits, active on\u2011chain surveillance of treasury, and scheduled reassessment.",
     "overall_posture": "heightened",
-    "one_paragraph_narrative": "WLFI is a governance/utility ERC\u201120 with notable market interest and listings but a highly centralised governance and treasury profile. The token is implemented via an upgradeable proxy with broad admin privileges and documented instances of freezes and reallocation, creating material control and upgradeability risk. A large concentrated treasury and off\u2011chain governance further increase strategic and reputational exposure. Given the speculative profile and technical/design concerns, the asset requires restrictive onboarding, continuous surveillance and explicit board-level approval before listing.",
+    "one_paragraph_narrative": "WIF is a speculative Solana memecoin with no documented utility, limited formal disclosures, an effectively anonymous origin and a community/marketing treasury controlled by a three\u2011signer multisig. Major exchanges have published token\u2011specific warnings. On\u2011chain analytics and multi\u2011venue liquidity exist, but holders are concentrated and flows can be episodic, raising market\u2011integrity and consumer\u2011harm risks. Listing is acceptable only under heightened internal controls: committee sign\u2011off, strong retail protections, continuous monitoring of known treasury addresses and clear client\u2011facing risk disclosures, with scheduled reassessment.",
     "key_positives": [
-      "ERC\u201120 token with verified on\u2011chain contract and analytics coverage.",
-      "Listed and traded on major venues providing observable liquidity and market data.",
-      "Plausible DeFi/utility roadmap within a broader World Liberty ecosystem (per public disclosures).",
-      "Documented on\u2011chain provenance for notable movements enabling monitoring."
+      "Significant multi\u2011venue liquidity and high 24h volume reported.",
+      "Transparent Solana SPL token with analytics coverage.",
+      "Listed by multiple major exchanges with public risk notices."
     ],
     "key_risks_and_mitigations": [
       {
-        "risk": "Centralised admin keys that can pause or change token logic.",
-        "mitigation": "Monitor ProxyAdmin address; alert on upgrades, set conservative deposit/withdraw and custody windows."
+        "risk": "Heavily speculation\u2011driven memecoin with no inherent utility.",
+        "mitigation": "Prominent client risk disclosures and suitability warnings; restrict product access and position limits for retail."
       },
       {
-        "risk": "Upgradeable proxy architecture enabling arbitrary implementation changes.",
-        "mitigation": "Implement real\u2011time monitoring of upgrade txns, suspend new product exposure pending anomalous upgrade activity."
+        "risk": "Limited formal documentation or whitepaper.",
+        "mitigation": "Label asset as low\u2011disclosure; require committee sign\u2011off and scheduled risk reassessment."
       },
       {
-        "risk": "Large, concentrated treasury holdings under single/group control.",
-        "mitigation": "Track treasury addresses; impose exposure and position limits; require pre\u2011trade committee approval for significant inventory builds."
+        "risk": "Treasury concentration (\u22643 multisig signers) for community funds.",
+        "mitigation": "Continuous on\u2011chain monitoring of known treasury addresses, alerts for large transfers, and internal exposure limits."
       },
       {
-        "risk": "Governance concentrated off\u2011chain (Snapshot) with limited on\u2011chain checks.",
-        "mitigation": "Treat governance outcomes as advisory; require internal legal review and restrict derivative/margin products."
-      },
-      {
-        "risk": "Complex protocol ecosystem and limited formal audit coverage.",
-        "mitigation": "Classify as complex asset in monitoring; increase frequency of technical and market surveillance."
+        "risk": "Episodic liquidity and potential for rapid liquidity withdrawal.",
+        "mitigation": "Conservative initial order and withdrawal limits, dynamic trading controls and heightened surveillance during volatility."
       }
     ],
     "board_escalations_summary": {
-      "count": 11,
+      "count": 4,
       "notable": [
         {
           "domain": "Token Fundamentals & Governance",
-          "issue": "Treasury control appears highly concentrated."
+          "issue": "Treasury controlled by \u22643 named signers."
         },
         {
-          "domain": "Regulatory & Legal Risk",
-          "issue": "Unilateral pause/disable authority via proxy admin."
+          "domain": "Token Fundamentals & Governance",
+          "issue": "No substantive whitepaper or technical documentation."
         },
         {
-          "domain": "Technical & Protocol Security",
-          "issue": "Upgradeable proxy with broad privileged functions."
+          "domain": "Market & Liquidity Integrity",
+          "issue": "Major exchanges issued token\u2011specific warnings."
+        },
+        {
+          "domain": "Strategic, Reputational & ESG",
+          "issue": "Asset heavily dependent on speculation/narrative."
         }
       ]
     },
     "recommended_listing_requirements": [
       {
-        "id": "enhanced_structural_monitoring",
-        "severity": "Recommended",
-        "title": "Treat this asset as a complex protocol in monitoring"
-      },
-      {
         "id": "treasury_concentration_watch",
         "severity": "Recommended",
         "title": "Watch treasury and reserve activity"
-      },
-      {
-        "id": "governance_and_admin_controls",
-        "severity": "Recommended",
-        "title": "Document admin-key and governance controls"
       },
       {
         "id": "speculative_profile_retail_controls",
@@ -1005,15 +942,15 @@
       }
     ],
     "open_questions_for_committee": [
-      "Accept listing subject to the proposed exposure and retail restrictions?",
-      "What maximum aggregate exposure and per\u2011client limits are appropriate pre/post listing?",
-      "Should deposits or trading be restricted pending a defined monitoring period after listing?",
-      "What escalation thresholds (upgrades, freezes, major treasury moves) must trigger immediate suspension?"
+      "What maximum per\u2011client position and deposit limits should we impose at onboarding and ongoing for WIF?",
+      "Do we restrict WIF availability to experienced/professional clients or prohibit margin and derivatives on this asset?",
+      "Do we mandate continuous automated monitoring and alerting for the identified treasury multisig and top holder addresses as a listing condition?",
+      "What specific volatility or outflow triggers (eg. large on\u2011chain transfers, 24h outflow %) will prompt suspension, review or additional controls?"
     ],
     "generation": {
       "method": "gpt",
-      "model": "gpt-4o",
-      "timestamp_utc": "2025-12-19T17:34:17+00:00"
+      "model": "gpt-4",
+      "timestamp_utc": "2025-12-21T22:44:36+00:00"
     }
   }
 }

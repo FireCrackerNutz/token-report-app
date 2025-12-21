@@ -54,6 +54,10 @@
             <div class="chip">Posture: <strong>{{ posture }}</strong></div>
           {% endif %}
           <div class="chip">Escalations: <strong>{{ escalations_count }}</strong></div>
+
+          {% for s in asset.headline_stats|default([]) %}
+            <div class="chip">{{ s.label }}: <strong>{{ s.value }}</strong></div>
+          {% endfor %}
           {% if classification.is_speculative_profile %}
             <div class="chip chipWarn">Speculative profile</div>
           {% endif %}
@@ -140,7 +144,186 @@
       </div>
     </section>
 
-    <!-- RISK DASHBOARD -->
+    <section class="section pageBreak">
+      <div class="sectionHeader">
+        <h2 class="h2">Token fact sheet</h2>
+        <div class="muted">
+          Reference information about the token and its implementation. This is not a marketing document and should be read alongside current market and technical data.
+        </div>
+      </div>
+
+      <div class="tokenCard">
+        <div class="tokenCardTop">
+          <div class="tokenId">
+            <div class="tokenName">{{ asset.name|default("—") }}</div>
+            <div class="tokenSub">
+              <span class="chip">Ticker: {{ asset.ticker|default("—") }}</span>
+              {% if asset.primary_chain %}<span class="chip">Chain: {{ asset.primary_chain }}</span>{% endif %}
+              {% if asset.token_type %}<span class="chip">Type: {{ asset.token_type }}</span>{% endif %}
+            </div>
+          </div>
+
+          {% set stats = asset.headline_stats|default([]) %}
+          <div class="tokenStats">
+            {% if stats %}
+              {% for s in stats %}
+                <div class="statChip">
+                  <div class="statLabel">{{ s.label }}</div>
+                  <div class="statValue">{{ s.value }}</div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="muted small">No headline stats available.</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="tokenMeta">
+          <div class="metaItem">
+            <div class="metaLabel">Website</div>
+            <div class="metaValue">
+              {% if asset.website %}<a class="linkBtn" href="{{ asset.website }}" target="_blank" rel="noreferrer noopener">{{ asset.website_host|default(asset.website) }}</a>{% else %}—{% endif %}
+            </div>
+          </div>
+          <div class="metaItem">
+            <div class="metaLabel">Whitepaper</div>
+            <div class="metaValue">
+              {% if asset.whitepaper %}<a class="linkBtn" href="{{ asset.whitepaper }}" target="_blank" rel="noreferrer noopener">{{ asset.whitepaper_host|default(asset.whitepaper) }}</a>{% else %}—{% endif %}
+            </div>
+          </div>
+        </div>
+
+        {% set desc = asset.description|default(asset.description_short|default("")) %}
+        {% if desc %}
+          <div class="hr"></div>
+          <div class="subhead">Overview</div>
+          <div class="tokenDesc">{{ desc|striptags }}</div>
+        {% endif %}
+
+        {% set links = asset.urls|default({}) %}
+        {% if links %}
+          <div class="hr"></div>
+          <div class="subhead">Key links</div>
+          <div class="linkRow">
+            {% for k,v in links.items() %}
+              {% if v %}
+                <a class="linkChip" href="{{ v }}" target="_blank" rel="noreferrer noopener">{{ k }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+
+
+    
+
+    <!-- ISSUER & KEY PEOPLE -->
+    <section class="section">
+      <div class="sectionHeader">
+        <h2 class="h2">Issuer &amp; key people</h2>
+        <div class="muted">
+          Public corporate and leadership information used to anchor accountability and monitoring. Where reliable sources are unavailable, fields are shown as “Unknown”.
+        </div>
+      </div>
+
+      {% set ip = snapshot.issuer_profile or {} %}
+      {% set issuer = ip.issuer or {} %}
+      {% set people = ip.key_people or [] %}
+
+      <div class="issuerGrid">
+        <div class="hudCard issuerCard">
+          <div class="hudCardHeader">
+            <div>
+              <div class="hudTitle">Issuer profile</div>
+              <div class="hudSub">Legal entity and registry identifiers (where disclosed)</div>
+            </div>
+            <div class="hudMeta">
+              {% if ip.retrieved_at_utc %}<span class="chip">Retrieved: {{ ip.retrieved_at_utc }}</span>{% endif %}
+              {% if issuer.confidence %}<span class="chip">Confidence: {{ issuer.confidence|capitalize }}</span>{% endif %}
+              {% if ip.status %}<span class="chip">Coverage: {{ ip.status }}</span>{% endif %}
+            </div>
+          </div>
+
+          <div class="issuerFields">
+            <div class="field"><div class="k">Legal name</div><div class="v">{{ issuer.legal_name|default("Unknown") }}</div></div>
+            <div class="field"><div class="k">Jurisdiction</div><div class="v">{{ issuer.jurisdiction|default("Unknown") }}</div></div>
+            <div class="field"><div class="k">Entity type</div><div class="v">{{ issuer.entity_type|default("Unknown") }}</div></div>
+            <div class="field"><div class="k">Registration #</div><div class="v mono">{{ issuer.registration_number|default("Unknown") }}</div></div>
+            <div class="field"><div class="k">LEI</div><div class="v mono">{{ issuer.lei|default("Unknown") }}</div></div>
+            <div class="field"><div class="k">Status</div><div class="v">{{ issuer.status|default("Unknown") }}</div></div>
+            <div class="field wide"><div class="k">Registered address</div><div class="v">{{ issuer.registered_address|default("Unknown") }}</div></div>
+
+            {% if issuer.website and issuer.website != "Unknown" %}
+              <div class="field wide">
+                <div class="k">Website</div>
+                <div class="v">
+                  <a class="linkSoft" href="{{ issuer.website }}" target="_blank" rel="noopener">{{ issuer.website }}</a>
+                </div>
+              </div>
+            {% else %}
+              <div class="field wide"><div class="k">Website</div><div class="v">Unknown</div></div>
+            {% endif %}
+          </div>
+
+          {% if issuer.evidence %}
+            <div class="evidenceRow">
+              {% for e in issuer.evidence[:8] %}
+                <a class="evidenceChip" href="{{ e.url }}" target="_blank" rel="noopener">{{ e.label }} <span class="ext">↗</span></a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="hudCard peopleCard">
+          <div class="hudCardHeader">
+            <div>
+              <div class="hudTitle">Key people</div>
+              <div class="hudSub">Leadership / governance roles disclosed in credible public sources</div>
+            </div>
+            <div class="hudMeta">
+              {% if people|length %}<span class="chip">{{ people|length }} identified</span>{% else %}<span class="chip">Unknown</span>{% endif %}
+            </div>
+          </div>
+
+          {% if people %}
+            <div class="peopleList">
+              {% for p in people[:8] %}
+                <div class="personRow">
+                  <div class="personTop">
+                    <div class="personName">{{ p.name }}</div>
+                    {% if p.confidence %}<span class="pill">{{ p.confidence|capitalize }}</span>{% endif %}
+                  </div>
+                  <div class="personMeta">
+                    {% if p.role and p.role != "Unknown" %}<span class="mini">{{ p.role }}</span>{% endif %}
+                    {% if p.affiliation and p.affiliation != "Unknown" %}<span class="mini">{{ p.affiliation }}</span>{% endif %}
+                  </div>
+                  {% if p.evidence %}
+                    <div class="personEvidence">
+                      {% for e in p.evidence[:3] %}
+                        <a class="evidenceChip" href="{{ e.url }}" target="_blank" rel="noopener">{{ e.label }} <span class="ext">↗</span></a>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="emptyState">
+              No reliable, repeatable disclosures on key individuals were found via public sources in this run.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if ip.notes %}
+        <div class="noteCallout">{{ ip.notes }}</div>
+      {% endif %}
+    </section>
+
+
+<!-- RISK DASHBOARD -->
     <section class="section pageBreak">
       <div class="sectionHeader">
         <h2 class="h2">Risk dashboard</h2>
@@ -448,65 +631,7 @@
     </section>
 
     <!-- TOKEN FACT SHEET -->
-    <section class="section pageBreak">
-      <div class="sectionHeader">
-        <h2 class="h2">Token fact sheet</h2>
-        <div class="muted">
-          Reference information about the token and its implementation. This is not a marketing document and should be read alongside current market and technical data.
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="factsGrid">
-          <div class="fact">
-            <div class="factLabel">Name</div>
-            <div class="factValue">{{ asset.name|default("—") }}</div>
-          </div>
-          <div class="fact">
-            <div class="factLabel">Ticker</div>
-            <div class="factValue">{{ asset.ticker|default("—") }}</div>
-          </div>
-          <div class="fact">
-            <div class="factLabel">Token type</div>
-            <div class="factValue">{{ asset.token_type|default("—") }}</div>
-          </div>
-          <div class="fact">
-            <div class="factLabel">Primary chain</div>
-            <div class="factValue">{{ asset.primary_chain|default("—") }}</div>
-          </div>
-          <div class="fact span2">
-            <div class="factLabel">Short description</div>
-            <div class="factValue">{{ asset.description_short|default("—") }}</div>
-          
-          <div class="fact">
-            <div class="factLabel">Website</div>
-            <div class="factValue">
-              {% if asset.website %}<a href="{{ asset.website }}">{{ asset.website }}</a>{% else %}—{% endif %}
-            </div>
-          </div>
-          <div class="fact">
-            <div class="factLabel">Whitepaper</div>
-            <div class="factValue">
-              {% if asset.whitepaper %}<a href="{{ asset.whitepaper }}">{{ asset.whitepaper }}</a>{% else %}—{% endif %}
-            </div>
-          </div>
-</div>
-        </div>
-
-        {% set links = asset.urls|default({}) %}
-        {% if links %}
-          <div class="hr"></div>
-          <div class="subhead">Key links</div>
-          <div class="linkRow">
-            {% for k,v in links.items() %}
-              {% if v %}
-                <a class="linkChip" href="{{ v }}" target="_blank" rel="noreferrer noopener">{{ k }}</a>
-              {% endif %}
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-    </section>
+    
 
     <section class="section small muted">
       This report is a risk snapshot based on the provided DDQ and optional third‑party metadata. It is not investment advice.

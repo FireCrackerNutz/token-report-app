@@ -491,6 +491,9 @@ def generate_executive_summary_via_gpt(
         "- Keep bullet counts tight (3-5 items where possible).\n"
         "- If evidence is thin or ambiguous, say so briefly rather than guessing.\n"
         "- Use mitigations that map to CLIENT FIRM actions (monitoring, disclosures, limits).\n"
+        "- For open_questions_for_committee: write committee decision questions (limits, triggers, required controls) rather than pure fact-finding.\n"
+        "- If a key fact is unknown, frame it as a decision: do we require verified evidence of X pre-listing, and if not, what compensating controls apply?\n"
+        "- Each open question must be phrased from the CLIENT FIRM perspective and end with a question mark.\n"
         "- Output JSON only, no extra commentary."
     )
 

@@ -9,6 +9,7 @@ from .risk_tag_inference import infer_risk_tags_from_ddq
 from .listing_requirements import build_listing_requirements, build_listing_context
 from .token_type import canonical_token_type_from_ddq
 from .token_fact_sheet import build_token_fact_sheet
+from .issuer_enrichment import enrich_issuer_and_key_people
 from .executive_summary import build_executive_summary
 
 
@@ -513,6 +514,10 @@ def build_report_snapshot(
         listing_requirements=listing_requirements,
     )
 
+    # --- Issuer & key people (enrichment) -----------------------------
+
+    issuer_profile = enrich_issuer_and_key_people(asset=(token_fact_sheet.get("asset") or {}))
+
     # --- Executive summary ---------------------------------------------
 
     executive_summary = build_executive_summary(
@@ -541,6 +546,7 @@ def build_report_snapshot(
         "asset_specific_risks": asset_specific_risks,
         "listing_requirements": listing_requirements,
         "token_fact_sheet": token_fact_sheet,
+        "issuer_profile": issuer_profile,
         "executive_summary": executive_summary,
     }
 

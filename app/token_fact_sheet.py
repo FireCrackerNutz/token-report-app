@@ -6,7 +6,7 @@ import time
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
 
@@ -235,25 +235,27 @@ def _clip(s: Optional[str], n: int = 600) -> Optional[str]:
     return s if len(s) <= n else (s[: n - 3] + "...")
 
 
-def _fallback_description_from_ddq(parsed_ddq: Dict[str, Any]) -> Optional[str]:
+def _fallback_description_from_ddq(parsed_ddq: Dict[str, Any], *, n: int = 600) -> Optional[str]:
     """
     DDQ fallback order:
       1) A1.1 narrative (token_category.narrative)
       2) A1.1 raw
       3) parsed_ddq.project_description
+
+    `n` controls the maximum length after clipping.
     """
     tc = parsed_ddq.get("token_category") or {}
     desc = (tc.get("narrative") or "").strip()
     if desc:
-        return _clip(desc)
+        return _clip(desc, n=n)
 
     raw = (tc.get("raw") or "").strip()
     if raw:
-        return _clip(raw)
+        return _clip(raw, n=n)
 
     pd = (parsed_ddq.get("project_description") or "").strip()
     if pd:
-        return _clip(pd)
+        return _clip(pd, n=n)
 
     return None
 
@@ -314,31 +316,102 @@ def build_token_fact_sheet(
     tag_set = set([t.get("id") for t in included_tags if t.get("id")])
     for tid in control_signal_ids:
         signals.append({"id": tid, "label": _label_for_tag(tid), "present": tid in tag_set})
-
-    # Description: CoinGecko first, DDQ fallback second
-    description_short = _clip(external.get("description_en")) or _clip(external.get("description")) or _fallback_description_from_ddq(parsed_ddq)
+    # Description: CoinGecko first, DDQ fallback second.
+    # Keep a longer narrative for the HTML report (still clipped to stay readable).
+    description_long = (
+        _clip(external.get("description_en"), n=1400)
+        or _clip(external.get("description"), n=1400)
+        or _fallback_description_from_ddq(parsed_ddq, n=1400)
+    )
+    # Back-compat: some renderers use description_short
+    description_short = description_long or _fallback_description_from_ddq(parsed_ddq, n=600)
 
     chains = []
     if isinstance(external.get("platforms"), dict):
         chains = [k for k, v in external.get("platforms").items() if v]
     primary_chain = chains[0] if chains else None
 
-    reqs_compact = [{"id": r.get("id"), "severity": r.get("severity"), "title": r.get("title")} for r in listing_requirements or []]
+    reqs_compact = [
+        {"id": r.get("id"), "severity": r.get("severity"), "title": r.get("title")}
+        for r in (listing_requirements or [])
+    ]
 
     urls = external.get("urls") or {}
     website = urls.get("homepage") or urls.get("website")
     whitepaper = urls.get("whitepaper")
+
+    def _host(u: Optional[str]) -> Optional[str]:
+        if not u:
+            return None
+        try:
+            p = urlparse(u)
+            h = (p.netloc or p.path or u).strip()
+            return h.replace("www.", "")
+        except Exception:
+            return u
+
+    # Headline stats (best-effort), based on CoinGecko market data if present.
+    market = external.get("market") or {}
+
+    def _fmt_int(v: Any) -> Optional[str]:
+        try:
+            if v is None or v == "":
+                return None
+            return f"{int(float(v)):,}"
+        except Exception:
+            sv = str(v).strip()
+            return sv or None
+
+    def _fmt_money(v: Any) -> Optional[str]:
+        try:
+            if v is None or v == "":
+                return None
+            return "$" + f"{float(v):,.0f}"
+        except Exception:
+            sv = str(v).strip()
+            return sv or None
+
+    headline_stats: List[Dict[str, str]] = []
+    if market.get("market_cap_rank"):
+        v = _fmt_int(market.get("market_cap_rank"))
+        if v:
+            headline_stats.append({"label": "Rank", "value": f"#{v}"})
+    if market.get("market_cap_usd"):
+        v = _fmt_money(market.get("market_cap_usd"))
+        if v:
+            headline_stats.append({"label": "Market cap", "value": v})
+    if market.get("volume_24h_usd"):
+        v = _fmt_money(market.get("volume_24h_usd"))
+        if v:
+            headline_stats.append({"label": "24h volume", "value": v})
+    if market.get("circulating_supply"):
+        v = _fmt_int(market.get("circulating_supply"))
+        if v:
+            headline_stats.append({"label": "Circ. supply", "value": v})
+    if market.get("max_supply"):
+        v = _fmt_int(market.get("max_supply"))
+        if v:
+            headline_stats.append({"label": "Max supply", "value": v})
+    elif market.get("total_supply"):
+        v = _fmt_int(market.get("total_supply"))
+        if v:
+            headline_stats.append({"label": "Total supply", "value": v})
+
 
     return {
         "asset": {
             "name": name,
             "ticker": ticker,
             "token_type": token_type,
+            "description": description_long,
             "description_short": description_short,
             "primary_chain": primary_chain,
             "chains": chains,
             "website": website,
             "whitepaper": whitepaper,
+            "website_host": _host(website),
+            "whitepaper_host": _host(whitepaper),
+            "headline_stats": headline_stats,
             "logo_url": external.get("logo_url"),
             "logo_source": external.get("provider") if external.get("logo_url") else None,
         },
